@@ -9,3 +9,7 @@ class ClientesListView(generics.ListCreateAPIView):
 class ClienteDetailView(generics.RetrieveUpdateAPIView):
     queryset = Clientes.objects.all()
     serializer_class = ClienteSerializer
+
+class ClienteCreateView(generics.CreateAPIView):
+    queryset = Clientes.objects.all()
+    serializer_class = ClienteSerializer
