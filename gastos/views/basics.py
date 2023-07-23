@@ -9,3 +9,7 @@ class GastosListView(generics.ListCreateAPIView):
 class GastosDetailView(generics.RetrieveUpdateAPIView):
     queryset = Gastos.objects.all()
     serializer_class = GastosSerializer
+
+class GastosCreateView(generics.CreateAPIView):
+    queryset = Gastos.objects.all()
+    serializer_class = GastosSerializer
