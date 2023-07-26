@@ -5,6 +5,11 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from datetime import timedelta
 from django.utils import timezone
 from django.contrib.auth import authenticate
+from rest_framework.generics import RetrieveAPIView
+from authentication.serializers import FetchUserSerializer
+from django.contrib.auth.models import User
+
+
 
 class LoginView(APIView):
     def post(self, request):
@@ -50,3 +55,12 @@ class LogoutView(APIView):
         else:
             # Devolver un mensaje de error si no se proporciona un token de acceso
             return Response({'detail': 'Token de acceso no proporcionado.'}, status=400)
+
+class FetchUserView(RetrieveAPIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = FetchUserSerializer
+    queryset = User.objects.all()
+    
+    def get_object(self):
+        return self.request.user
+    

@@ -11,7 +11,7 @@ class Clientes(models.Model):
         OPCION_C = 3, 'mal'
         OPCION_D = 4, 'muy_mal'
 
-    id_cliente = models.AutoField(primary_key=True)
+    id_cliente = models.AutoField("clientes.Clientes", primary_key=True)
     nombre = models.CharField(max_length=20, null=False)
     apellido = models.CharField(max_length=20, null=False)
     estado_cliente = models.IntegerField(choices=status_cliente.choices)
@@ -23,6 +23,4 @@ class Clientes(models.Model):
     numero_celular_1 = models.CharField(max_length=10, null=False)
     numero_celular_2 = models.CharField(max_length=10, null=True)
     email = models.EmailField(unique=True, null=True)
-    saldo = models.DecimalField(max_digits=10, decimal_places=2, null=True)
-    ruta = models.CharField(max_length=20, null=False)
-    cuota_diaria = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    ruta = models.ForeignKey("rutas.Rutas", on_delete=models.SET_NULL,null=True)

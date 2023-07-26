@@ -2,12 +2,35 @@ from django.db import models
 from clientes.models import Clientes
 from empleados.models import Empleados
 from django.core.validators import MaxValueValidator
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
 # Create your models here.
 class Creditos(models.Model):
-            
+    
     id_credito = models.AutoField(primary_key=True)
     id_cliente = models.ForeignKey(Clientes, on_delete=models.CASCADE)
     id_empleado = models.ForeignKey(Empleados, on_delete=models.CASCADE)
-    cantidad_dias = models.IntegerField(default=0, null=False)
-    interes = models.IntegerField(default=0, validators=[MaxValueValidator(99)], null=False)
-    fecha_inicio = models.DateField (null=False)
+    cantidad_dias = models.PositiveIntegerField(default=0, null=False)
+    interes = models.IntegerField(default=20, validators=[MaxValueValidator(99)], null=False)
+    fecha_inicio = models.DateField(null=False)
+    valor_credito = models.DecimalField(max_digits=10, decimal_places=2, null=False)
+    fecha_finalizacion_estimada = models.DateField(null=False)
+    fecha_finalizacion_real = models.DateField(null=True)
+    cuotas_pagadas = models.PositiveIntegerField(null=False, default=0)
+    credito_finalizado = models.BooleanField (null=False, default= False)
+    cuota_diaria = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    
+    
+    
+class Payments(models.Model):
+    
+    credito = models.ForeignKey(Creditos, on_delete=models.DO_NOTHING, related_name="payments")
+    fecha_pago = models.DateField(auto_now=False, auto_now_add=False)
+    responsable = models.ForeignKey("empleados.Empleados", on_delete= models.DO_NOTHING)
+    monto_pago = models.DecimalField( decimal_places=2, max_digits=10, null= True)
+    pagado_completo = models.BooleanField(default= False, null=False)
+    numero_cuota = models.PositiveIntegerField(null=False)
+    cuotas_pendientes = models.PositiveIntegerField(null=False)
+    fecha_actualizacion = models.DateField(auto_now=True, null= True)
+    monto_esperado = models.DecimalField( decimal_places=2, max_digits=10)

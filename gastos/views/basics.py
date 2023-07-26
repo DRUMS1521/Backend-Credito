@@ -5,6 +5,7 @@ from gastos.serializers import GastosSerializer
 class GastosListView(generics.ListCreateAPIView):
     queryset = Gastos.objects.all()
     serializer_class = GastosSerializer
+    pagination_class = None
 
 class GastosDetailView(generics.RetrieveUpdateAPIView):
     queryset = Gastos.objects.all()

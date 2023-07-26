@@ -1,5 +1,6 @@
 from django.db import models
 
+
 # Create your models here.
 class Gastos(models.Model):
         
@@ -9,3 +10,7 @@ class Gastos(models.Model):
     descripcion = models.CharField(max_length=200)
     fecha_gasto = models.DateField(null=False)
     valor_gasto = models.CharField(max_length=20, null=False)
+
+
+##ahora se crea el modelo para administrar los gastos
+ 

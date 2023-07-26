@@ -1,1 +1,1 @@
-from .basics import LoginView, LogoutView
+from .basics import LoginView, LogoutView, FetchUserView

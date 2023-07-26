@@ -1,1 +1,1 @@
-from .creditos import Creditos
+from .creditos import Creditos, Payments
