@@ -13,7 +13,9 @@ class ListaCreditosView(generics.ListCreateAPIView):
 class DetalleCreditoView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Creditos.objects.all()
     serializer_class = CreditoSerializer
+    permission_classes = [permissions.IsAuthenticated]  
 
 class CreditoCreateView(generics.CreateAPIView):
     queryset = Creditos.objects.all()
     serializer_class = CreditoSerializer
+    permission_classes = [permissions.IsAuthenticated]  

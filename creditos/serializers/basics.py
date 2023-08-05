@@ -26,7 +26,7 @@ class CreditoSerializer(serializers.ModelSerializer):
         fields = [
             "id_credito",
             "id_cliente",
-            "id_empleado",
+            "id_empleado", 
             "cantidad_dias",
             "interes",
             "fecha_inicio",

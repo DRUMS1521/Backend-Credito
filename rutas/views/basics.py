@@ -8,9 +8,9 @@ class RutasListView(generics.ListCreateAPIView):
     queryset = Rutas.objects.all()
     serializer_class = RutasSerializer
     permission_classes =[ permissions.IsAdminUser]
-#permissions.IsAuthenticated,
+
 class RutasDetailView(generics.RetrieveUpdateAPIView):
     queryset = Rutas.objects.all()
     serializer_class = RutasSerializer
-    
+    permission_classes =[ permissions.IsAdminUser]
 
