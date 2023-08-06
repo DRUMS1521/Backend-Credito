@@ -25,7 +25,7 @@ class EmpleadoSerializer(serializers.Serializer):
     first_name = serializers.CharField(source='user.first_name', read_only=True)
     last_name = serializers.CharField(source='user.last_name', read_only=True)
     email = serializers.CharField(source='user.email', read_only=True)
-    ruta_write = serializers.IntegerField(write_only=True, allow_null=False, allow_blank=False, required=True)
+    ruta_write = serializers.IntegerField(write_only=True, allow_null=False, required=True)
     ruta = serializers.SerializerMethodField(read_only=True)
     
 
