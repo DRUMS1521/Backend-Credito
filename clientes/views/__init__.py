@@ -1,1 +1,1 @@
-from .basics import ClienteDetailView, ClientesListView, ClienteCreateView
+from .basics import ClienteDetailView, ClientesListView
