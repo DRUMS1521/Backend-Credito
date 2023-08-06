@@ -10,6 +10,12 @@ class CreditoSerializer(serializers.ModelSerializer):
 
     id_credito = serializers.IntegerField(read_only= True)
     id_cliente = serializers.PrimaryKeyRelatedField(queryset= Clientes.objects.all(),allow_null=False, required=True)
+    nombre_cliente = serializers.CharField(source='id_cliente.nombre', read_only=True)
+    apellido_cliente = serializers.CharField(source='id_cliente.apellido', read_only=True)
+    direccion_cliente = serializers.CharField(source='id_cliente.direccion_1', read_only=True)
+    numero_celular_cliente = serializers.CharField(source='id_cliente.numero_celular_1', read_only=True)
+    ruta = serializers.IntegerField(source='id_cliente.ruta.id', read_only=True)
+    empleado = serializers.IntegerField(source='id_cliente.ruta.id_empleado.id_empleado', read_only=True)
     id_empleado = serializers.PrimaryKeyRelatedField(read_only=True)
     cantidad_dias = serializers.IntegerField(min_value= 5, max_value=60,allow_null=False, required=True)
     interes = serializers.IntegerField(min_value= 5, max_value=50,allow_null=False, required=True)
@@ -24,18 +30,24 @@ class CreditoSerializer(serializers.ModelSerializer):
     class Meta: 
         model = Creditos
         fields = [
-            "id_credito",
-            "id_cliente",
-            "id_empleado", 
-            "cantidad_dias",
-            "interes",
-            "fecha_inicio",
-            "valor_credito",
-            "fecha_finalizacion_estimada",
-            "fecha_finalizacion_real",
-            "cuotas_pagadas",
-            "credito_finalizado",
-            "cuota_diaria",
+            'id_credito',
+            'id_cliente',
+            'nombre_cliente',
+            'apellido_cliente',
+            'direccion_cliente',
+            'numero_celular_cliente',
+            'ruta',
+            'empleado',
+            'id_empleado',
+            'cantidad_dias',
+            'interes',
+            'fecha_inicio',
+            'valor_credito',
+            'fecha_finalizacion_estimada',
+            'fecha_finalizacion_real',
+            'cuotas_pagadas',
+            'credito_finalizado',
+            'cuota_diaria',
         ]
     
     def validate(self, attrs):
