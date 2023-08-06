@@ -83,9 +83,6 @@ class EmpleadoSerializer(serializers.Serializer):
             this_route = Rutas.objects.get(id_ruta=attrs["ruta_write"])
         except:
             raise serializers.ValidationError("ruta no existe")
-        else:
-            if this_route.id_empleado is not None:
-                raise serializers.ValidationError("ruta ya esta asignada a otro empleado")
         return attrs
 
     def create(self, validated_data):
