@@ -25,6 +25,7 @@ class EmpleadoSerializer(serializers.Serializer):
     first_name = serializers.CharField(source='user.first_name', read_only=True)
     last_name = serializers.CharField(source='user.last_name', read_only=True)
     email = serializers.CharField(source='user.email', read_only=True)
+    ruta = serializers.SerializerMethodField(read_only=True)
     
 
     class Meta:
@@ -41,7 +42,16 @@ class EmpleadoSerializer(serializers.Serializer):
             'first_name',
             'last_name',
             'email',
+            'ruta'
         ]
+
+    def get_ruta(self, obj):
+        try:
+            ruta = Rutas.objects.get(empleado=obj)
+        except:
+            return None
+        else:
+            return ruta.id_ruta
 
     def validate(self, attrs):
         try:
