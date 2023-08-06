@@ -9,6 +9,7 @@ class ListaCreditosView(generics.ListCreateAPIView):
     queryset = Creditos.objects.all()
     serializer_class = CreditoSerializer
     permission_classes = [permissions.IsAuthenticated]
+    pagination_class = None
 
 class DetalleCreditoView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Creditos.objects.all()
