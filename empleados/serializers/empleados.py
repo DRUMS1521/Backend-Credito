@@ -22,6 +22,9 @@ class EmpleadoSerializer(serializers.Serializer):
     password = serializers.CharField(
         required=True, allow_null=False, allow_blank=False, write_only=True)
     user = serializers.PrimaryKeyRelatedField(read_only=True)
+    first_name = serializers.CharField(source='user.first_name', read_only=True)
+    last_name = serializers.CharField(source='user.last_name', read_only=True)
+    email = serializers.CharField(source='user.email', read_only=True)
     
 
     class Meta:
@@ -35,6 +38,9 @@ class EmpleadoSerializer(serializers.Serializer):
             "last_name",
             "password",
             "user",
+            'first_name',
+            'last_name',
+            'email',
         ]
 
     def validate(self, attrs):
