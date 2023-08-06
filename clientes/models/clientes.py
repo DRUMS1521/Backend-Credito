@@ -19,7 +19,7 @@ class Clientes(models.Model):
     apellido = models.CharField(max_length=20, null=False)
     estado_cliente = models.IntegerField(choices=STATUS_CHOICES, default=0)
     estado_credito = models.IntegerField(choices=LOAN_STATUS, default=2)
-    nacionalidad = models.CharField(max_length=15, null=False)
+    nacionalidad = models.CharField(max_length=60, null=False)
     nacimiento = models.DateField(null=False)
     direccion_1 = models.CharField(max_length=30, null=False)
     direccion_2 = models.CharField(max_length=30, null=True, blank=True)
