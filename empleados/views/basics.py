@@ -8,6 +8,7 @@ class EmpleadosListView(generics.ListCreateAPIView):
     queryset = Empleados.objects.all()
     serializer_class = EmpleadoSerializer
     permission_classes =[ permissions.IsAdminUser]
+    pagination_class = None
     
 class EmpleadoDetailView(generics.RetrieveUpdateAPIView):
     queryset = Empleados.objects.all()

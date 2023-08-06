@@ -7,6 +7,14 @@ from django.dispatch import receiver
 
 # Create your models here.
 class Creditos(models.Model):
+
+    STATUS_CHOICES = (
+        (1, 'Excelente'),
+        (2, 'Bueno'),
+        (3, 'Regular'),
+        (4, 'Malo'),
+        (5, 'Muy Malo'),
+    )
     
     id_credito = models.AutoField(primary_key=True)
     id_cliente = models.ForeignKey(Clientes, on_delete=models.CASCADE)
@@ -20,7 +28,7 @@ class Creditos(models.Model):
     cuotas_pagadas = models.PositiveIntegerField(null=False, default=0)
     credito_finalizado = models.BooleanField (null=False, default= False)
     cuota_diaria = models.DecimalField(max_digits=10, decimal_places=2, null=True)
-    
+    estado = models.PositiveIntegerField(choices=STATUS_CHOICES, default=2, null=False)
     
     
 class Payments(models.Model):
