@@ -16,7 +16,6 @@ class CreditoSerializer(serializers.ModelSerializer):
     numero_celular_cliente = serializers.CharField(source='id_cliente.numero_celular_1', read_only=True)
     ruta = serializers.IntegerField(source='id_cliente.ruta.id', read_only=True)
     empleado = serializers.IntegerField(source='id_cliente.ruta.id_empleado.id_empleado', read_only=True)
-    id_empleado = serializers.PrimaryKeyRelatedField(read_only=True)
     cantidad_dias = serializers.IntegerField(min_value= 5, max_value=60,allow_null=False, required=True)
     interes = serializers.IntegerField(min_value= 5, max_value=50,allow_null=False, required=True)
     fecha_inicio = serializers.DateField(allow_null=False, required=True)
@@ -38,7 +37,6 @@ class CreditoSerializer(serializers.ModelSerializer):
             'numero_celular_cliente',
             'ruta',
             'empleado',
-            'id_empleado',
             'cantidad_dias',
             'interes',
             'fecha_inicio',
