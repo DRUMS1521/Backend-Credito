@@ -57,7 +57,8 @@ class CreditoSerializer(serializers.ModelSerializer):
             total_paid = 0
             dues_paid = 0
             for payment in payments:
-                total_paid += payment.monto_pago
+                if payment.monto_pago is not None:
+                    total_paid += payment.monto_pago
                 if payment.pagado_completo:
                     dues_paid += 1
                 dues_detail.append(
