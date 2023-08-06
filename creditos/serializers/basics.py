@@ -69,4 +69,7 @@ class CreditoSerializer(serializers.ModelSerializer):
                 fecha_actualizacion = None,
                 monto_esperado = obj.cuota_diaria
             )
+        cliente = Clientes.objects.get(id_cliente=obj.id_cliente.id_cliente)
+        cliente.estado_cliente = 1
+        cliente.save()
         return obj
