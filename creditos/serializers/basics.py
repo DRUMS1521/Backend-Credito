@@ -26,6 +26,8 @@ class CreditoSerializer(serializers.ModelSerializer):
     credito_finalizado = serializers.BooleanField(read_only=True)
     cuota_diaria = serializers.IntegerField(read_only=True)
     credit_details = serializers.SerializerMethodField(read_only=True)
+    estado = serializers.IntegerField(read_only=True)
+    status = serializers.CharField(source='get_estado_display', read_only=True)
 
     class Meta: 
         model = Creditos
@@ -47,6 +49,8 @@ class CreditoSerializer(serializers.ModelSerializer):
             'cuotas_pagadas',
             'credito_finalizado',
             'cuota_diaria',
+            'estado',
+            'status',
             'credit_details'
         ]
     
