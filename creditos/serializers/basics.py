@@ -25,7 +25,8 @@ class CreditoSerializer(serializers.ModelSerializer):
     cuotas_pagadas = serializers.IntegerField(read_only=True)
     credito_finalizado = serializers.BooleanField(read_only=True)
     cuota_diaria = serializers.IntegerField(read_only=True)
-    
+    credit_details = serializers.SerializerMethodField(read_only=True)
+
     class Meta: 
         model = Creditos
         fields = [
@@ -46,8 +47,42 @@ class CreditoSerializer(serializers.ModelSerializer):
             'cuotas_pagadas',
             'credito_finalizado',
             'cuota_diaria',
+            'credit_details'
         ]
     
+    def get_credit_details(self, obj):
+        payments = Payments.objects.filter(credito=obj)
+        dues_detail = []
+        if len(payments) > 0:
+            total_paid = 0
+            dues_paid = 0
+            for payment in payments:
+                total_paid += payment.monto_pago
+                if payment.pagado_completo:
+                    dues_paid += 1
+                dues_detail.append(
+                    {
+                        "fecha_pago": payment.fecha_pago,
+                        "monto_pago": payment.monto_pago,
+                        "pagado_completo": payment.pagado_completo,
+                        "numero_cuota": payment.numero_cuota,
+                        "cuotas_pendientes": payment.cuotas_pendientes,
+                        "fecha_actualizacion": payment.fecha_actualizacion,
+                        "monto_esperado": payment.monto_esperado
+                    }
+                )
+            return {
+                "total_paid": total_paid,
+                "total_pending": obj.valor_credito - total_paid,
+                "dues_paid": dues_paid,
+                "dues_pending": obj.cantidad_dias - dues_paid,
+                "dues_detail": dues_detail
+            }
+        else:
+            return {}
+        
+        
+
     def validate(self, attrs):
         attrs["cuota_diaria"] = float(attrs["valor_credito"])*(1+(attrs["interes"]/100))/attrs["cantidad_dias"]
         attrs["fecha_finalizacion_estimada"] = attrs["fecha_inicio"]+timedelta(days=attrs["cantidad_dias"])
