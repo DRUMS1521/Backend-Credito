@@ -25,6 +25,7 @@ class EmpleadoSerializer(serializers.Serializer):
     first_name = serializers.CharField(source='user.first_name', read_only=True)
     last_name = serializers.CharField(source='user.last_name', read_only=True)
     email = serializers.CharField(source='user.email', read_only=True)
+    ruta_write = serializers.IntegerField(write_only=True, allow_null=False, allow_blank=False, required=True)
     ruta = serializers.SerializerMethodField(read_only=True)
     
 
@@ -42,7 +43,8 @@ class EmpleadoSerializer(serializers.Serializer):
             'first_name',
             'last_name',
             'email',
-            'ruta'
+            'ruta',
+            'ruta_write'
         ]
 
     def get_ruta(self, obj):
@@ -76,7 +78,14 @@ class EmpleadoSerializer(serializers.Serializer):
             pass
         else:
             raise serializers.ValidationError("email ya existe")
-
+        #validate that this route is not already assigned to another employee
+        try:
+            this_route = Rutas.objects.get(id_ruta=attrs["ruta_write"])
+        except:
+            raise serializers.ValidationError("ruta no existe")
+        else:
+            if this_route.id_empleado is not None:
+                raise serializers.ValidationError("ruta ya esta asignada a otro empleado")
         return attrs
 
     def create(self, validated_data):
@@ -87,5 +96,7 @@ class EmpleadoSerializer(serializers.Serializer):
         user.save()
         empledo = Empleados.objects.create(
             cedula=validated_data["cedula"], numero_celular_1=validated_data["numero_celular_1"], fecha_inicio=datetime.now(), user=user)
-
+        ruta = Rutas.objects.get(id_ruta=validated_data["ruta_write"])
+        ruta.id_empleado = empledo
+        ruta.save()
         return empledo
