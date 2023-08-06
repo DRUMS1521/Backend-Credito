@@ -18,13 +18,22 @@ class ClienteSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Los numeros de celular no pueden ser iguales")
         if attrs['direccion_1'] == attrs['direccion_2']:
             raise serializers.ValidationError("Las direcciones no pueden ser iguales")
-        #validate unique email
-        if attrs['email'] is not None:
-            if Clientes.objects.filter(email=attrs['email']).exists():
-                raise serializers.ValidationError("El email ya existe")
-        #validate unique numero_celular_1
-        if Clientes.objects.filter(numero_celular_1=attrs['numero_celular_1']).exists():
-            raise serializers.ValidationError("El numero de celular ya existe")
+        if self.instance is None:
+            #validate unique email
+            if attrs['email'] is not None:
+                if Clientes.objects.filter(email=attrs['email']).exists():
+                    raise serializers.ValidationError("El email ya existe")
+            #validate unique numero_celular_1
+            if Clientes.objects.filter(numero_celular_1=attrs['numero_celular_1']).exists():
+                raise serializers.ValidationError("El numero de celular ya existe")
+        else:
+            #validate unique email
+            if attrs['email'] is not None:
+                if Clientes.objects.filter(email=attrs['email']).exclude(id_cliente=self.instance.id_cliente).exists():
+                    raise serializers.ValidationError("El email ya existe")
+            #validate unique numero_celular_1
+            if Clientes.objects.filter(numero_celular_1=attrs['numero_celular_1']).exclude(id_cliente=self.instance.id_cliente).exists():
+                raise serializers.ValidationError("El numero de celular ya existe")
         return attrs
     
     def create(self, validated_data):
