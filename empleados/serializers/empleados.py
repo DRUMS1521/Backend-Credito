@@ -47,7 +47,7 @@ class EmpleadoSerializer(serializers.Serializer):
 
     def get_ruta(self, obj):
         try:
-            ruta = Rutas.objects.get(empleado=obj)
+            ruta = Rutas.objects.get(id_empleado=obj)
         except:
             return None
         else:
