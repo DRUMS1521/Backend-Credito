@@ -6,9 +6,10 @@ from rest_framework import permissions
 class ClientesListView(generics.ListCreateAPIView, generics.CreateAPIView):
     queryset = Clientes.objects.all()
     serializer_class = ClienteSerializer
-    permission_classes = [permissions.IsAuthenticated]  
+    permission_classes = [permissions.IsAuthenticated]
+    
 
 class ClienteDetailView(generics.RetrieveUpdateAPIView):
     queryset = Clientes.objects.all()
     serializer_class = ClienteSerializer
-    permission_classes = [permissions.IsAuthenticated]  
+    permission_classes = [permissions.IsAuthenticated]
