@@ -6,19 +6,10 @@ class Clientes(models.Model):
         (0, 'inactivo')
     )
 
-    LOAN_STATUS = (
-        (1, 'Excelente'),
-        (2, 'Bueno'),
-        (3, 'Regular'),
-        (4, 'Malo'),
-        (5, 'Muy Malo')
-    )
-
     id_cliente = models.AutoField("clientes.Clientes", primary_key=True)
     nombre = models.CharField(max_length=20, null=False)
     apellido = models.CharField(max_length=20, null=False)
     estado_cliente = models.IntegerField(choices=STATUS_CHOICES, default=0)
-    estado_credito = models.IntegerField(choices=LOAN_STATUS, default=2)
     nacionalidad = models.CharField(max_length=60, null=False)
     nacimiento = models.DateField(null=False)
     direccion_1 = models.CharField(max_length=30, null=False)

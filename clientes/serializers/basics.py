@@ -6,9 +6,7 @@ class ClienteSerializer(serializers.ModelSerializer):
     nombre = serializers.CharField(required=True)
     apellido = serializers.CharField(required=True)
     estado_cliente = serializers.IntegerField(required=False)
-    estado_credito = serializers.IntegerField(required=False)
     estado_del_cliente = serializers.CharField(source='get_estado_cliente_display', read_only=True)
-    estado_del_credito = serializers.CharField(source='get_estado_credito_display', read_only=True)
     direccion_2 = serializers.CharField(required=False, allow_blank=True, allow_null=True)
     numero_celular_2 = serializers.CharField(required=False, allow_blank=True, allow_null=True)
     class Meta:
