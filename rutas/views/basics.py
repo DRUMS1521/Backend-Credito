@@ -10,6 +10,9 @@ class RutasListView(generics.ListCreateAPIView):
     permission_classes =[ permissions.IsAdminUser]
     pagination_class = None
 
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
 class RutasDetailView(generics.RetrieveUpdateAPIView):
     queryset = Rutas.objects.all()
     serializer_class = RutasSerializer
