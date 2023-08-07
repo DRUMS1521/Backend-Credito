@@ -25,17 +25,33 @@ class PaymentsDetailSerializer(serializers.ModelSerializer):
     telefono = serializers.CharField(source='credito.id_cliente.telefono_1', read_only=True)
     email = serializers.CharField(source='credito.id_cliente.email', read_only=True)
     cuotas_pagadas = serializers.IntegerField(source='credito.cuotas_pagadas', read_only=True)
+    total_pendiente = serializers.SerializerMethodField(read_only=True)
 
 
     class Meta:
         model = Payments
-        fields = ['id', 'fecha_pago', 'monto_pago', 'pagado_completo', 'numero_cuota', 'cuotas_pendientes', 'ruta_id', 'credito_id', 'monto_esperado', 'finalizado', 'nombre', 'apellido', 'direccion', 'telefono', 'email', 'cuotas_pagadas']
+        fields = ['id', 'fecha_pago', 'monto_pago', 'pagado_completo', 'numero_cuota', 'cuotas_pendientes', 'ruta_id', 'credito_id', 'monto_esperado', 'finalizado', 'nombre', 'apellido', 'direccion', 'telefono', 'email', 'cuotas_pagadas', 'total_pendiente']
 
     def get_finalizado(self, obj):
         if obj.monto_pago is not None:
             return True
         else:
             return False
+        
+    def get_total_pendiente(self, obj):
+        try:
+            credito = obj.credito
+        except:
+            return None
+        #first, sum all payments
+        payments = Payments.objects.filter(credito=credito)
+        total_paid = 0
+        for payment in payments:
+            if payment.monto_pago is not None:
+                total_paid += payment.monto_pago
+        #second, calculate max amount to pay
+        max_amount = Decimal(Decimal(credito.valor_credito)*Decimal(Decimal(1)+Decimal(Decimal(credito.interes)/100))) - Decimal(total_paid)
+        return max_amount
 
 class PaymentsSerializer(serializers.ModelSerializer):
 
