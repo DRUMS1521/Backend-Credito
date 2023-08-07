@@ -22,12 +22,15 @@ class ListPaymentsView(generics.ListAPIView):
         if user.is_superuser:
             query_date = self.request.query_params.get('date', None)
             query_ruta = self.request.query_params.get('ruta', None)
+            query_solo_pendientes = self.request.query_params.get('only_pending', None)
             if query_date is not None and query_date != '':
                 #use Q to filter the main queryset
                 queryset = queryset.filter(Q(fecha_pago=query_date))
             if query_ruta is not None and query_ruta != '':
                 #use Q to filter the main queryset
                 queryset = queryset.filter(Q(ruta=query_ruta))
+            if query_solo_pendientes == 'true':
+                queryset = queryset.filter(Q(credito_finalizado=False))
         else:
             try:
                 empleado = Empleados.objects.get(user=user)
@@ -38,7 +41,7 @@ class ListPaymentsView(generics.ListAPIView):
             except:
                 queryset = Payments.objects.none()
             else:
-                queryset = Payments.objects.filter(ruta=ruta, fecha_pago=timezone.now()).order_by('id')
+                queryset = Payments.objects.filter(ruta=ruta, fecha_pago=timezone.now(), credito__credito_finalizado=False).order_by('id')
         return queryset
     
 class UpdatePaymentsView(generics.UpdateAPIView):
