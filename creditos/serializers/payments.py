@@ -19,10 +19,17 @@ class PaymentsDetailSerializer(serializers.ModelSerializer):
     credito_id = serializers.IntegerField(source='credito.id_credito',read_only=True)
     monto_esperado = serializers.DecimalField(read_only=True, max_digits=10, decimal_places=2)
     finalizado = serializers.SerializerMethodField(read_only=True)
+    nombre = serializers.CharField(source='credito.id_cliente.nombre', read_only=True)
+    apellido = serializers.CharField(source='credito.id_cliente.apellido', read_only=True)
+    direccion = serializers.CharField(source='credito.id_cliente.direccion_1', read_only=True)
+    telefono = serializers.CharField(source='credito.id_cliente.telefono_1', read_only=True)
+    email = serializers.CharField(source='credito.id_cliente.email', read_only=True)
+    cuotas_pagadas = serializers.IntegerField(source='credito.cuotas_pagadas', read_only=True)
+
 
     class Meta:
         model = Payments
-        fields = ('id', 'fecha_pago', 'monto_pago', 'pagado_completo', 'numero_cuota', 'cuotas_pendientes', 'ruta_id', 'credito_id','monto_esperado', 'finalizado')
+        fields = ['id', 'fecha_pago', 'monto_pago', 'pagado_completo', 'numero_cuota', 'cuotas_pendientes', 'ruta_id', 'credito_id', 'monto_esperado', 'finalizado', 'nombre', 'apellido', 'direccion', 'telefono', 'email', 'cuotas_pagadas']
 
     def get_finalizado(self, obj):
         if obj.monto_pago is not None:
