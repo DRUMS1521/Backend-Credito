@@ -18,7 +18,6 @@ class Creditos(models.Model):
     
     id_credito = models.AutoField(primary_key=True)
     id_cliente = models.ForeignKey(Clientes, on_delete=models.CASCADE)
-    id_empleado = models.ForeignKey(Empleados, on_delete=models.CASCADE)
     cantidad_dias = models.PositiveIntegerField(default=0, null=False)
     interes = models.IntegerField(default=20, validators=[MaxValueValidator(99)], null=False)
     fecha_inicio = models.DateField(null=False)

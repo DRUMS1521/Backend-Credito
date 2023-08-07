@@ -5,7 +5,7 @@ from rest_framework import permissions
 
 
 class RutasListView(generics.ListCreateAPIView):
-    queryset = Rutas.objects.all()
+    queryset = Rutas.objects.all().order_by('id_ruta')
     serializer_class = RutasSerializer
     permission_classes =[ permissions.IsAdminUser]
     pagination_class = None

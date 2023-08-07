@@ -13,11 +13,11 @@ class EmpleadoSerializer(serializers.Serializer):
     numero_celular_1 = serializers.CharField(
         required=True, allow_null=False, allow_blank=False)
     fecha_inicio = serializers.DateField(read_only=True)
-    email = serializers.EmailField(
+    email_write = serializers.EmailField(
         required=True, allow_null=False, allow_blank=False, write_only=True)
-    first_name = serializers.CharField(
+    first_name_write = serializers.CharField(
         required=True, allow_null=False, allow_blank=False, write_only=True)
-    last_name = serializers.CharField(
+    last_name_write = serializers.CharField(
         required=True, allow_null=False, allow_blank=False, write_only=True)
     password = serializers.CharField(
         required=True, allow_null=False, allow_blank=False, write_only=True)
@@ -35,7 +35,7 @@ class EmpleadoSerializer(serializers.Serializer):
             "cedula",
             "numero_celular_1",
             "fecha_inicio",
-            "email",
+            "email_write",
             "first_name",
             "last_name",
             "password",
@@ -72,8 +72,7 @@ class EmpleadoSerializer(serializers.Serializer):
         else:
             raise serializers.ValidationError("numero de Celular ya existe")
         try:
-            User.objects.get(email=attrs["email"])
-            
+            User.objects.get(email=attrs["email_write"])
         except:
             pass
         else:
@@ -87,8 +86,7 @@ class EmpleadoSerializer(serializers.Serializer):
 
     def create(self, validated_data):
 
-        user = User.objects.create(email=validated_data["email"], username=validated_data["email"],
-                                first_name=validated_data["first_name"], last_name=validated_data["last_name"])
+        user = User.objects.create(username=validated_data["email_write"], email=validated_data["email_write"], first_name=validated_data["first_name_write"], last_name=validated_data["last_name_write"])
         user.set_password(validated_data["password"])
         user.save()
         empledo = Empleados.objects.create(

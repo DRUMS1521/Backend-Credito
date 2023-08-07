@@ -91,7 +91,6 @@ class CreditoSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         attrs["cuota_diaria"] = float(attrs["valor_credito"])*(1+(attrs["interes"]/100))/attrs["cantidad_dias"]
         attrs["fecha_finalizacion_estimada"] = attrs["fecha_inicio"]+timedelta(days=attrs["cantidad_dias"])
-        attrs["id_empleado"]=attrs["id_cliente"].ruta.id_empleado
         return attrs
         
     def create(self, validated_data):
