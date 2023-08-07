@@ -40,5 +40,5 @@ class Payments(models.Model):
     pagado_completo = models.BooleanField(default= False, null=False)
     numero_cuota = models.PositiveIntegerField(null=False)
     cuotas_pendientes = models.PositiveIntegerField(null=False)
-    fecha_actualizacion = models.DateField(auto_now=True, null= True)
+    fecha_actualizacion = models.DateField(auto_now_add=True, null= True)
     monto_esperado = models.DecimalField( decimal_places=2, max_digits=10)

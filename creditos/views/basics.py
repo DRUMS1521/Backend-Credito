@@ -19,4 +19,4 @@ class DetalleCreditoView(generics.RetrieveUpdateDestroyAPIView):
 class CreditoCreateView(generics.CreateAPIView):
     queryset = Creditos.objects.all()
     serializer_class = CreditoSerializer
-    permission_classes = [permissions.IsAuthenticated]  
+    permission_classes = [permissions.IsAuthenticated]
