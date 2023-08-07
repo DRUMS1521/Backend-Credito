@@ -1,5 +1,5 @@
 from django.urls import path
-from authentication.views import LoginView, LogoutView, FetchUserView, CustomTokenRefreshView, ChangePasswordView
+from authentication.views import LoginView, LogoutView, FetchUserView, CustomTokenRefreshView, ChangePasswordView, DeactivateOrActivateEmployee
 
 app_name = 'auth'
 
@@ -9,4 +9,5 @@ urlpatterns = [
     path('fetchuser', FetchUserView.as_view(), name='fetchuser'),
     path('refresh_token', CustomTokenRefreshView.as_view(), name='token_refresh'),
     path('change_password', ChangePasswordView.as_view(), name='change_password'),
+    path('deactivate_or_activate_employee', DeactivateOrActivateEmployee.as_view(), name='deactivate_or_activate_employee'),
 ]
