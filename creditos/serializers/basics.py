@@ -96,17 +96,18 @@ class CreditoSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         obj = Creditos.objects.create(**validated_data)
         for i in range(1,validated_data["cantidad_dias"]+1):
-            responsable = obj.id_cliente.ruta.id_empleado
+            ruta = obj.id_cliente.ruta.id_ruta
             Payments.objects.create(
                 credito = obj,
                 fecha_pago = obj.fecha_inicio+timedelta(days = i-1),
-                responsable = responsable,
+                ruta = ruta,
                 monto_pago = None, 
                 pagado_completo = False,
                 numero_cuota = i,
                 cuotas_pendientes = obj.cantidad_dias - i,
                 fecha_actualizacion = None,
-                monto_esperado = obj.cuota_diaria
+                monto_esperado = obj.cuota_diaria,
+                responsable = None
             )
         cliente = Clientes.objects.get(id_cliente=obj.id_cliente.id_cliente)
         cliente.estado_cliente = 1

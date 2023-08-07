@@ -34,7 +34,8 @@ class Payments(models.Model):
     
     credito = models.ForeignKey(Creditos, on_delete=models.DO_NOTHING, related_name="payments")
     fecha_pago = models.DateField(auto_now=False, auto_now_add=False)
-    responsable = models.ForeignKey("empleados.Empleados", on_delete= models.DO_NOTHING)
+    responsable = models.ForeignKey("empleados.Empleados", on_delete= models.DO_NOTHING, null= True)
+    ruta = models.ForeignKey("rutas.Rutas", on_delete= models.DO_NOTHING)
     monto_pago = models.DecimalField( decimal_places=2, max_digits=10, null= True)
     pagado_completo = models.BooleanField(default= False, null=False)
     numero_cuota = models.PositiveIntegerField(null=False)
