@@ -8,6 +8,7 @@ from django.contrib.auth import authenticate
 from rest_framework.generics import RetrieveAPIView
 from authentication.serializers import FetchUserSerializer
 from django.contrib.auth.models import User
+from rest_framework.generics import GenericAPIView
 
 
 
@@ -64,3 +65,14 @@ class FetchUserView(RetrieveAPIView):
     def get_object(self):
         return self.request.user
     
+class ChangePasswordView(GenericAPIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = FetchUserSerializer
+    queryset = User.objects.all()
+    
+    def post(self, request):
+        user = request.user
+        password = request.data.get('password')
+        user.set_password(password)
+        user.save()
+        return Response({'detail': 'Contraseña actualizada con éxito.'})
