@@ -27,6 +27,7 @@ class EmpleadoSerializer(serializers.Serializer):
     email = serializers.CharField(source='user.email', read_only=True)
     ruta_write = serializers.IntegerField(write_only=True, allow_null=False, required=True)
     ruta = serializers.SerializerMethodField(read_only=True)
+    is_active = serializers.BooleanField(source='user.is_active' ,read_only=True)
     
 
     class Meta:
@@ -44,7 +45,8 @@ class EmpleadoSerializer(serializers.Serializer):
             'last_name',
             'email',
             'ruta',
-            'ruta_write'
+            'ruta_write',
+            'is_active'
         ]
 
     def get_ruta(self, obj):

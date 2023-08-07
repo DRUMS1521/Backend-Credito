@@ -76,3 +76,32 @@ class ChangePasswordView(GenericAPIView):
         user.set_password(password)
         user.save()
         return Response({'detail': 'Contraseña actualizada con éxito.'})
+    
+class ResetEmployeePassword(GenericAPIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = FetchUserSerializer
+    queryset = User.objects.all()
+    
+    def post(self, request):
+        if request.user.is_superuser == False:
+            return Response({'detail': 'No tienes permiso para realizar esta acción.'})
+        user = User.objects.get(id=request.data.get('user_id'))
+        user.set_password('1234')
+        user.save()
+        return Response({'detail': 'Contraseña actualizada con éxito.'})
+    
+class DeactivateOrActivateEmployee(GenericAPIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = FetchUserSerializer
+    queryset = User.objects.all()
+    
+    def post(self, request):
+        if request.user.is_superuser == False:
+            return Response({'detail': 'No tienes permiso para realizar esta acción.'})
+        user = User.objects.get(id=request.data.get('user_id'))
+        if user.is_active == False:
+            user.is_active = True
+        else:
+            user.is_active = False
+        user.save()
+        return Response({'detail': 'Estado actualizado con éxito.'})
