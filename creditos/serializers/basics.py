@@ -55,7 +55,7 @@ class CreditoSerializer(serializers.ModelSerializer):
         ]
     
     def get_credit_details(self, obj):
-        payments = Payments.objects.filter(credito=obj)
+        payments = Payments.objects.filter(credito=obj).order_by('id')
         dues_detail = []
         if len(payments) > 0:
             total_paid = 0
