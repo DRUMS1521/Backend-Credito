@@ -97,3 +97,27 @@ class EmpleadoSerializer(serializers.Serializer):
         ruta.id_empleado = empledo
         ruta.save()
         return empledo
+
+class UpdateEmployeeRouteSerializer(serializers.Serializer):
+    ruta_write = serializers.IntegerField(write_only=True, allow_null=False, required=True)
+    class Meta:
+        fields = [
+            "ruta_write",
+        ]
+    def validate(self, attrs):
+        try:
+            Rutas.objects.get(id_ruta=attrs["ruta_write"])
+        except:
+            raise serializers.ValidationError("ruta no existe")
+        return attrs
+    def update(self, instance, validated_data):
+        try:
+            ruta_actual = Rutas.objects.get(id_empleado=instance)
+            ruta_actual.id_empleado = None
+            ruta_actual.save()
+        except:
+            pass
+        ruta = Rutas.objects.get(id_ruta=validated_data["ruta_write"])
+        ruta.id_empleado = instance
+        ruta.save()
+        return instance
