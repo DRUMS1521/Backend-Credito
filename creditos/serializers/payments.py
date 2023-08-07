@@ -27,11 +27,12 @@ class PaymentsDetailSerializer(serializers.ModelSerializer):
     cuotas_pagadas = serializers.IntegerField(source='credito.cuotas_pagadas', read_only=True)
     cantidad_dias = serializers.IntegerField(source='credito.cantidad_dias', read_only=True)
     total_pendiente = serializers.SerializerMethodField(read_only=True)
+    total_credito = serializers.SerializerMethodField(read_only=True)
 
 
     class Meta:
         model = Payments
-        fields = ['id', 'fecha_pago', 'monto_pago', 'pagado_completo', 'numero_cuota', 'cuotas_pendientes', 'ruta_id', 'credito_id', 'monto_esperado', 'finalizado', 'nombre', 'apellido', 'direccion', 'telefono', 'email', 'cuotas_pagadas', 'cantidad_dias','total_pendiente']
+        fields = ['id', 'fecha_pago', 'monto_pago', 'pagado_completo', 'numero_cuota', 'cuotas_pendientes', 'ruta_id', 'credito_id', 'monto_esperado', 'finalizado', 'nombre', 'apellido', 'direccion', 'telefono', 'email', 'cuotas_pagadas', 'cantidad_dias','total_pendiente', 'total_credito']
 
     def get_finalizado(self, obj):
         if obj.monto_pago is not None:
@@ -53,6 +54,13 @@ class PaymentsDetailSerializer(serializers.ModelSerializer):
         #second, calculate max amount to pay
         max_amount = Decimal(Decimal(credito.valor_credito)*Decimal(Decimal(1)+Decimal(Decimal(credito.interes)/100))) - Decimal(total_paid)
         return max_amount
+    
+    def get_total_credito(self, obj):
+        try:
+            credito = obj.credito
+        except:
+            return None
+        return Decimal(credito.valor_credito)*Decimal(Decimal(1)+Decimal(Decimal(credito.interes)/100))
 
 class PaymentsSerializer(serializers.ModelSerializer):
 
