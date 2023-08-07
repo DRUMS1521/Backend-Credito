@@ -77,10 +77,13 @@ class PaymentsSerializer(serializers.ModelSerializer):
         credito.save()
         #first calculate if is the last payment and the amout satisfied the credit
         if instance.numero_cuota == credito.cantidad_dias:
-            if total_paid >= valor_final_credito:
+            if total_paid == valor_final_credito:
                 credito.credito_finalizado = True
                 credito.fecha_finalizacion_real = instance.fecha_pago
                 credito.save()
+                cliente = credito.id_cliente
+                cliente.estado_cliente = 0
+                cliente.save()
             else:
                 credito.cantidad_dias += 1
                 credito.save()
@@ -108,6 +111,9 @@ class PaymentsSerializer(serializers.ModelSerializer):
                         credito.credito_finalizado = True
                         credito.fecha_finalizacion_real = instance.fecha_pago
                         credito.save()
+                        cliente = credito.id_cliente
+                        cliente.estado_cliente = 0
+                        cliente.save()
                         #update next dues
                         next_dues = Payments.objects.filter(credito=credito, numero_cuota__gt=instance.numero_cuota)
                         for due in next_dues:
@@ -141,6 +147,9 @@ class PaymentsSerializer(serializers.ModelSerializer):
                                     credito.credito_finalizado = True
                                     credito.fecha_finalizacion_real = instance.fecha_pago
                                     credito.save()
+                                    cliente = credito.id_cliente
+                                    cliente.estado_cliente = 0
+                                    cliente.save()
                                     break
                                 else:
                                     new_next_due_value = Payments.objects.get(credito=credito, numero_cuota=instance.numero_cuota+i).monto_esperado
