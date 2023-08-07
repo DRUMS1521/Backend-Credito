@@ -25,12 +25,13 @@ class PaymentsDetailSerializer(serializers.ModelSerializer):
     telefono = serializers.CharField(source='credito.id_cliente.numero_celular_1', read_only=True)
     email = serializers.CharField(source='credito.id_cliente.email', read_only=True)
     cuotas_pagadas = serializers.IntegerField(source='credito.cuotas_pagadas', read_only=True)
+    cantidad_dias = serializers.IntegerField(source='credito.cantidad_dias', read_only=True)
     total_pendiente = serializers.SerializerMethodField(read_only=True)
 
 
     class Meta:
         model = Payments
-        fields = ['id', 'fecha_pago', 'monto_pago', 'pagado_completo', 'numero_cuota', 'cuotas_pendientes', 'ruta_id', 'credito_id', 'monto_esperado', 'finalizado', 'nombre', 'apellido', 'direccion', 'telefono', 'email', 'cuotas_pagadas', 'total_pendiente']
+        fields = ['id', 'fecha_pago', 'monto_pago', 'pagado_completo', 'numero_cuota', 'cuotas_pendientes', 'ruta_id', 'credito_id', 'monto_esperado', 'finalizado', 'nombre', 'apellido', 'direccion', 'telefono', 'email', 'cuotas_pagadas', 'cantidad_dias','total_pendiente']
 
     def get_finalizado(self, obj):
         if obj.monto_pago is not None:
