@@ -30,7 +30,7 @@ class ListPaymentsView(generics.ListAPIView):
                 #use Q to filter the main queryset
                 queryset = queryset.filter(Q(ruta=query_ruta))
             if query_solo_pendientes == 'true':
-                queryset = queryset.filter(Q(credito_finalizado=False))
+                queryset = queryset.filter(Q(credito__credito_finalizado=False))
         else:
             try:
                 empleado = Empleados.objects.get(user=user)
