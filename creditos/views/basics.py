@@ -18,7 +18,7 @@ class ListaCreditosView(generics.ListCreateAPIView):
         if finalizado == 'true':
             queryset = queryset.filter(Q(credito_finalizado=True))
         else:
-            pass
+            queryset = queryset.filter(Q(credito_finalizado=False))
         return queryset
 
 
