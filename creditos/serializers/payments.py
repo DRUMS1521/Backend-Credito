@@ -18,10 +18,17 @@ class PaymentsDetailSerializer(serializers.ModelSerializer):
     ruta_id = serializers.IntegerField(source='ruta.id_ruta',read_only=True)
     credito_id = serializers.IntegerField(source='credito.id_credito',read_only=True)
     monto_esperado = serializers.DecimalField(read_only=True, max_digits=10, decimal_places=2)
+    finalizado = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Payments
-        fields = ('id', 'fecha_pago', 'monto_pago', 'pagado_completo', 'numero_cuota', 'cuotas_pendientes', 'ruta_id', 'credito_id','monto_esperado')
+        fields = ('id', 'fecha_pago', 'monto_pago', 'pagado_completo', 'numero_cuota', 'cuotas_pendientes', 'ruta_id', 'credito_id','monto_esperado', 'finalizado')
+
+    def get_finalizado(self, obj):
+        if obj.monto_pago is not None:
+            return True
+        else:
+            return False
 
 class PaymentsSerializer(serializers.ModelSerializer):
 
