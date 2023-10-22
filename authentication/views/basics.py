@@ -28,7 +28,7 @@ class LoginView(APIView):
             access_token = refresh.access_token
             
             # Establecer la expiración del token de acceso en 2 minutos
-            access_token.set_exp(lifetime=timedelta(minutes=2))
+            access_token.set_exp(lifetime=timedelta(hours=24))
             
             # Devolver los tokens de acceso y actualización en la respuesta
             return Response({
