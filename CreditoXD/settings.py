@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+import datetime
 
 #Rest Framework
 REST_FRAMEWORK = {
@@ -20,6 +21,24 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
+}
+
+#JWT
+
+SIMPLE_JWT = {
+    'SIGNING_KEY': 'django-secure-rj4u7#ox(832=z^w2kk@x1kln1y_13^33yrh*k5*u%g_zp_cgs',
+    'ALGORITHM': 'HS256',
+    'ACCESS_TOKEN_LIFETIME': datetime.timedelta(hours=24),
+    'REFRESH_TOKEN_LIFETIME': datetime.timedelta(hours=24),
+    "AUDIENCE": "jejemon",
+    "ISSUER": "Jejemon",
+    "SUBJECT": "web/app user auth",
+}
+
+BLACKLIST_APP = {
+    'ROTATE_REFRESH_TOKENS': True,
+    'CHECK_BLACKLIST': True,
+    'ALWAYS_BLACKLIST': True,
 }
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
