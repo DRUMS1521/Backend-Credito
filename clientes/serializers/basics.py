@@ -21,6 +21,8 @@ class ClienteSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Las direcciones no pueden ser iguales")
         if self.instance is None:
             #validate unique email
+            if attrs['email'] is None:
+                raise serializers.ValidationError("El email es requerido")
             if attrs['email'] is not None:
                 if Clientes.objects.filter(email=attrs['email']).exists():
                     raise serializers.ValidationError("El email ya existe")
