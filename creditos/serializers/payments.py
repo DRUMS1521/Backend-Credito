@@ -5,7 +5,7 @@ from clientes.models import Clientes
 from django.contrib.auth.models import User
 from datetime import datetime, timedelta
 import pdb
-from decimal import Decimal
+from decimal import Decimal    
 
 class PaymentsDetailSerializer(serializers.ModelSerializer):
 
