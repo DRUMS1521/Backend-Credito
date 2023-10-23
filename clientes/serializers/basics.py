@@ -7,6 +7,7 @@ class ClienteSerializer(serializers.ModelSerializer):
     apellido = serializers.CharField(required=True)
     estado_cliente = serializers.IntegerField(required=False)
     estado_del_cliente = serializers.CharField(source='get_estado_cliente_display', read_only=True)
+    tipo_de_cliente = serializers.CharField(source='get_tipo_cliente_display', read_only=True)
     direccion_2 = serializers.CharField(required=False, allow_blank=True, allow_null=True)
     numero_celular_2 = serializers.CharField(required=False, allow_blank=True, allow_null=True)
     class Meta:
@@ -34,6 +35,8 @@ class ClienteSerializer(serializers.ModelSerializer):
             #validate unique numero_celular_1
             if Clientes.objects.filter(numero_celular_1=attrs['numero_celular_1']).exclude(id_cliente=self.instance.id_cliente).exists():
                 raise serializers.ValidationError("El numero de celular ya existe")
+        empleado_responsable = self.context['request'].user
+        attrs['empleado_responsable'] = empleado_responsable
         return attrs
     
     def create(self, validated_data):
