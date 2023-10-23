@@ -15,7 +15,6 @@ class PaymentsDetailSerializer(serializers.ModelSerializer):
     pagado_completo = serializers.BooleanField(read_only=True)
     numero_cuota = serializers.IntegerField(read_only=True)
     cuotas_pendientes = serializers.IntegerField(read_only=True)
-    ruta_id = serializers.IntegerField(source='ruta.id_ruta',read_only=True)
     credito_id = serializers.IntegerField(source='credito.id_credito',read_only=True)
     monto_esperado = serializers.DecimalField(read_only=True, max_digits=10, decimal_places=2)
     finalizado = serializers.SerializerMethodField(read_only=True)
@@ -32,7 +31,7 @@ class PaymentsDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Payments
-        fields = ['id', 'fecha_pago', 'monto_pago', 'pagado_completo', 'numero_cuota', 'cuotas_pendientes', 'ruta_id', 'credito_id', 'monto_esperado', 'finalizado', 'nombre', 'apellido', 'direccion', 'telefono', 'email', 'cuotas_pagadas', 'cantidad_dias','total_pendiente', 'total_credito']
+        fields = ['id', 'fecha_pago', 'monto_pago', 'pagado_completo', 'numero_cuota', 'cuotas_pendientes', 'credito_id', 'monto_esperado', 'finalizado', 'nombre', 'apellido', 'direccion', 'telefono', 'email', 'cuotas_pagadas', 'cantidad_dias','total_pendiente', 'total_credito']
 
     def get_finalizado(self, obj):
         if obj.monto_pago is not None:
@@ -92,17 +91,12 @@ class PaymentsSerializer(serializers.ModelSerializer):
             attrs['pagado_completo'] = True
         else:
             attrs['pagado_completo'] = False
-        #set responsable
-        try:
-            attrs['responsable'] = Empleados.objects.get(user=self.context['request'].user)
-        except:
-            raise serializers.ValidationError("No se puede obtener el usuario, el usuario no es un empleado")
         return attrs
     
     def update(self, instance, validated_data):
         instance.monto_pago = validated_data['monto_pago']
         instance.pagado_completo = validated_data['pagado_completo']
-        instance.responsable = validated_data['responsable']
+        responsable = validated_data.get('responsable', instance.responsable)
         instance.save()
         #update credito
         credito = Creditos.objects.get(id_credito = instance.credito.id_credito)
@@ -130,11 +124,10 @@ class PaymentsSerializer(serializers.ModelSerializer):
                     fecha_pago = instance.fecha_pago + timedelta(days=1),
                     monto_esperado = valor_final_credito - total_paid,
                     numero_cuota = instance.numero_cuota+1,
-                    ruta = instance.ruta,
                     credito = credito,
                     monto_pago = None,
                     cuotas_pendientes = 1,
-                    responsable = None
+                    responsable = responsable
                 )
         else:
             if validated_data['pagado_completo'] == False:
