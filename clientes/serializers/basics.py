@@ -1,5 +1,7 @@
 from rest_framework import serializers
 from clientes.models.clientes import Clientes
+from creditos.models.creditos import Creditos
+from creditos.serializers.basics import CreditoSerializer
 
 class ClienteSerializer(serializers.ModelSerializer):
     id_cliente = serializers.IntegerField(read_only=True)
@@ -10,9 +12,15 @@ class ClienteSerializer(serializers.ModelSerializer):
     tipo_de_cliente = serializers.CharField(source='get_tipo_cliente_display', read_only=True)
     direccion_2 = serializers.CharField(required=False, allow_blank=True, allow_null=True)
     numero_celular_2 = serializers.CharField(required=False, allow_blank=True, allow_null=True)
+    loans = serializers.SerializerMethodField()
     class Meta:
         model = Clientes
         fields = '__all__'
+
+    def get_loans(self, obj):
+        loans = Creditos.objects.filter(id_cliente=obj)
+        serializer = CreditoSerializer(loans, many=True)
+        return serializer.data
 
     def validate(self, attrs):
         if attrs['numero_celular_1'] == attrs['numero_celular_2']:
