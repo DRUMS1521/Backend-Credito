@@ -2,6 +2,7 @@ from django.db import models
 from clientes.models import Clientes
 from empleados.models import Empleados
 from django.core.validators import MaxValueValidator
+from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
@@ -32,10 +33,9 @@ class Creditos(models.Model):
     
 class Payments(models.Model):
     
-    credito = models.ForeignKey(Creditos, on_delete=models.DO_NOTHING, related_name="payments")
+    credito = models.ForeignKey(Creditos, on_delete=models.SET_NULL, related_name="payments", null=True)
     fecha_pago = models.DateField(auto_now=False, auto_now_add=False)
-    responsable = models.ForeignKey("empleados.Empleados", on_delete= models.DO_NOTHING, null= True)
-    ruta = models.ForeignKey("rutas.Rutas", on_delete= models.DO_NOTHING)
+    responsable = models.ForeignKey(User, on_delete= models.SET_NULL, null= True)
     monto_pago = models.DecimalField( decimal_places=2, max_digits=10, null= True)
     pagado_completo = models.BooleanField(default= False, null=False)
     numero_cuota = models.PositiveIntegerField(null=False)

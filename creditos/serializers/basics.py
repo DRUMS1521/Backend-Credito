@@ -14,8 +14,7 @@ class CreditoSerializer(serializers.ModelSerializer):
     apellido_cliente = serializers.CharField(source='id_cliente.apellido', read_only=True)
     direccion_cliente = serializers.CharField(source='id_cliente.direccion_1', read_only=True)
     numero_celular_cliente = serializers.CharField(source='id_cliente.numero_celular_1', read_only=True)
-    ruta = serializers.IntegerField(source='id_cliente.ruta.id_ruta', read_only=True)
-    empleado = serializers.IntegerField(source='id_cliente.ruta.id_empleado.id_empleado', read_only=True)
+    empleado = serializers.IntegerField(source='id_cliente.empleado_responsable.id_empleado', read_only=True)
     cantidad_dias = serializers.IntegerField(min_value= 5, max_value=60,allow_null=False, required=True)
     interes = serializers.IntegerField(min_value= 5, max_value=50,allow_null=False, required=True)
     fecha_inicio = serializers.DateField(allow_null=False, required=True)
@@ -38,7 +37,6 @@ class CreditoSerializer(serializers.ModelSerializer):
             'apellido_cliente',
             'direccion_cliente',
             'numero_celular_cliente',
-            'ruta',
             'empleado',
             'cantidad_dias',
             'interes',
@@ -96,18 +94,17 @@ class CreditoSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         obj = Creditos.objects.create(**validated_data)
         for i in range(1,validated_data["cantidad_dias"]+1):
-            ruta = obj.id_cliente.ruta
+            responsable = obj.id_cliente.empleado_responsable
             Payments.objects.create(
                 credito = obj,
                 fecha_pago = obj.fecha_inicio+timedelta(days = i-1),
-                ruta = ruta,
                 monto_pago = None, 
                 pagado_completo = False,
                 numero_cuota = i,
                 cuotas_pendientes = obj.cantidad_dias - i,
                 fecha_actualizacion = None,
                 monto_esperado = obj.cuota_diaria,
-                responsable = None
+                responsable = responsable
             )
         cliente = Clientes.objects.get(id_cliente=obj.id_cliente.id_cliente)
         cliente.estado_cliente = 1
