@@ -1,1 +1,0 @@
-from .gastos import Gastos

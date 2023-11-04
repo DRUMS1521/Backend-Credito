@@ -1,1 +1,0 @@
-from .basics import GastosListView, GastosDetailView,  GastosCreateView

@@ -1,1 +1,0 @@
-from .finanzas import Finanzas

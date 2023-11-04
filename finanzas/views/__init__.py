@@ -1,1 +1,0 @@
-from .basics import FinanzasListView, FinanzasDetailView
