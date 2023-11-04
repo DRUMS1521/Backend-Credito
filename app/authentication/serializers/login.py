@@ -69,14 +69,19 @@ class LoginSerializer(serializers.Serializer):
         if self.user_could_try_login(user)==True:
             try_login = auth.authenticate(email=email, password=password)
             try:
-                if user and try_login:
-                    dummy = user.id == try_login.id
+                
+                if user != None and try_login != None:
+                    pass
+                else:
+                    raise AuthenticationFailed({'error': 'Credenciales incorrectas, por favor intente de nuevo'})
             except:
-                ip_address = self.context['request'].META['HTTP_X_FORWARDED_FOR']
+                #import pdb;pdb.set_trace()
+                ip_address = None
+                ip_address = self.context['request'].META.get('HTTP_X_FORWARDED_FOR')
                 if ip_address:
                     ip_address = ip_address.split(',')[0]
                 else:
-                    ip_address = self.context['request'].META['REMOTE_ADDR']
+                    ip_address = self.context['request'].META.get('REMOTE_ADDR')
                 Failed_login_attempts.objects.create(
                     user=user,
                     ip_address = ip_address,
@@ -88,8 +93,8 @@ class LoginSerializer(serializers.Serializer):
                     user.failed_login_attempts = 0
                     user.release_login_after = timezone.now()+timedelta(minutes=10)
                     user.save()
-                    raise AuthenticationFailed({'custom_code': [4]})
-                raise AuthenticationFailed({'custom_code': [3]})
+                    AuthenticationFailed({'error': 'Credenciales incorrectas, por favor intente de nuevo'})
+                raise AuthenticationFailed({'error': 'Credenciales incorrectas, por favor intente de nuevo'})
             else:
                 user.last_login = timezone.now()
                 user.failed_login_attempts = 0
@@ -97,8 +102,7 @@ class LoginSerializer(serializers.Serializer):
                 user.save()
                 return attrs
         else:
-            raise AuthenticationFailed({'custom_code': [4]})
-        
+            raise AuthenticationFailed({'error': 'Espere 10 minutos para volver a intentar'})
 
     class Meta:
         fields = ['id',
