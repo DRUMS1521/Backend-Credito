@@ -20,6 +20,8 @@ class FullLoanSerializer(serializers.ModelSerializer):
     today_have_to_pay = serializers.SerializerMethodField(read_only=True)
     payment_today = serializers.SerializerMethodField(read_only=True)
     days_in_arrears = serializers.SerializerMethodField(read_only=True)
+    authorized_by_first_name = serializers.CharField(source='authorized_by.first_name', read_only=True)
+    authorized_by_last_name = serializers.CharField(source='authorized_by.last_name', read_only=True)
 
     class Meta:
         model = Loan
