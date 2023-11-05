@@ -1,4 +1,4 @@
-from app.loans.models import Loan
+from app.loans.models import Loan, Payment
 from rest_framework import serializers
 from app.loans.serializers import CustomerFullSerializer
 from datetime import datetime, timedelta
@@ -17,10 +17,25 @@ class FullLoanSerializer(serializers.ModelSerializer):
     customer_data = CustomerFullSerializer(read_only=True, source='customer')
     due_last_date = serializers.SerializerMethodField(read_only=True)
     dues_required_to_ontime = serializers.SerializerMethodField(read_only=True)
+    today_have_to_pay = serializers.SerializerMethodField(read_only=True)
+    payment_today = serializers.SerializerMethodField(read_only=True)
     class Meta:
         model = Loan
         fields = '__all__'
         read_only_fields = ('created_at', 'updated_at')
+
+    def get_payment_today(self, obj):
+        today = datetime.now().date()
+        payments = Payment.objects.filter(loan=obj, created_at__date=today)
+        if payments.count() > 0:
+            # sum payments
+            total = 0
+            for payment in payments:
+                total += payment.amount
+            return total
+        else:
+            return 0
+
     def get_due_last_date(self, obj):
         dues = obj.dues
         created_date = obj.start_date
