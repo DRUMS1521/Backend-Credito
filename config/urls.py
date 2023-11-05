@@ -19,5 +19,6 @@ from django.urls import path, include
 urlpatterns = [
 
     path('auth/', include('app.authentication.urls')),
+    path('loans/', include('app.loans.urls')),
 
 ]

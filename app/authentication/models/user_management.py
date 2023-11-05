@@ -1,5 +1,6 @@
 from django.contrib.auth.models import (
     AbstractBaseUser, BaseUserManager, PermissionsMixin)
+from app.accounting.models import Wallet
 
 
 class UserManager(BaseUserManager):
@@ -10,6 +11,9 @@ class UserManager(BaseUserManager):
         user = self.model(username=self.normalize_email(email), email=self.normalize_email(email), first_name=first_name)
         user.set_password(password)
         user.save()
+        #Create wallet
+        wallet = Wallet(user=user)
+        wallet.save()
         return user
 
     def create_superuser(self, email, password=None):
