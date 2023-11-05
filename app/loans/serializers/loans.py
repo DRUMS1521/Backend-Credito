@@ -23,6 +23,7 @@ class FullLoanSerializer(serializers.ModelSerializer):
     authorized_by_first_name = serializers.CharField(source='authorized_by.first_name', read_only=True)
     authorized_by_last_name = serializers.CharField(source='authorized_by.last_name', read_only=True)
     who_referred_name = serializers.CharField(source='customer.who_referred.name', read_only=True)
+    who_referred_phone = serializers.CharField(source='customer.who_referred.cell_phone_number', read_only=True)
 
     class Meta:
         model = Loan
