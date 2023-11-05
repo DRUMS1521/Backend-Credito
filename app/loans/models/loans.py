@@ -32,6 +32,9 @@ class Loan(models.Model):
     def save(self, *args, **kwargs):
         # Calculate interest amount
         self.interest_amount = self.amount * self.interest_rate
+        # Create wallet movement
+        destiny_wallet = Wallet.objects.get(user=self.customer.debt_collector)
+        WalletMovement.objects.create(wallet=destiny_wallet, name = 'pago de cuota', type='loan_out', amount=self.amount, reason=f'Salida por prestamo del cliente {self.customer.name} por un monto de {self.amount}')
         super(Loan, self).save(*args, **kwargs)
 
 
@@ -65,5 +68,5 @@ class Payment(models.Model):
         self.loan.save()
         # Create wallet movement
         destiny_wallet = Wallet.objects.get(user=self.loan.customer.debt_collector)
-        WalletMovement.objects.create(wallet=destiny_wallet, name = 'pago de cuota', type='deposit', amount=amount, reason=f'Entrada por cobro de prestamo del día {self.created_at} del cliente {self.loan.customer.name} por un monto de {amount} id de prestamo {self.loan.id}')
+        WalletMovement.objects.create(wallet=destiny_wallet, name = 'pago de cuota', type='loan_in', amount=self.amount, reason=f'Entrada por cobro de prestamo del cliente {self.loan.customer.name} por un monto de {amount} id de prestamo {self.loan.id}')
         super(Payment, self).save(*args, **kwargs)

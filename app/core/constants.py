@@ -12,6 +12,9 @@ LOAN_RECURRENCE_CHOICES = (
 WALLET_MOVEMENT_TYPE_CHOICES = (
     ("entry", "entry"),
     ("exit", "exit"),
+    ("loan_out", "loan_out"),
+    ("loan_in", "loan_in"),
+    ("admin_charge", "admin_charge"),
 )
 
 CUSTOMER_TYPE_CHOICES = (

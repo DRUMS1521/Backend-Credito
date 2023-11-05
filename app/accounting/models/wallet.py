@@ -26,7 +26,7 @@ class WalletMovement(models.Model):
         db_table = 'wallet_movements'
 
     def save(self, *args, **kwargs):
-        if self.type == 'deposit':
+        if self.type in ['entry', 'loan_in', 'admin_charge']:
             self.wallet.balance += self.amount
         else:
             self.wallet.balance -= self.amount
