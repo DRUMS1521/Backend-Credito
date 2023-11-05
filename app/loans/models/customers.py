@@ -10,6 +10,7 @@ class Customer(models.Model):
     business_name = models.CharField(max_length=255, null=True)
     business_address = models.CharField(max_length=255, null=True)
     cell_phone_number = models.CharField(max_length=255, null=True, unique=True)
+    notes = models.CharField(max_length=1000, null=True)
     occupation = models.CharField(max_length=255, null=True)
     alias_or_reference = models.CharField(max_length=255, null=True)
     who_referred = models.ForeignKey('self', on_delete=models.SET_NULL, null=True)
