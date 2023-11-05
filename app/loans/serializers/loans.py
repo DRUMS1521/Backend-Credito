@@ -19,10 +19,42 @@ class FullLoanSerializer(serializers.ModelSerializer):
     dues_required_to_ontime = serializers.SerializerMethodField(read_only=True)
     today_have_to_pay = serializers.SerializerMethodField(read_only=True)
     payment_today = serializers.SerializerMethodField(read_only=True)
+    days_in_arrears = serializers.SerializerMethodField(read_only=True)
+
     class Meta:
         model = Loan
         fields = '__all__'
         read_only_fields = ('created_at', 'updated_at')
+
+    def get_today_have_to_pay(self, obj):
+        if obj.dues_paid < self.get_dues_required_to_ontime(obj):
+            return True
+        else:
+            return False
+
+    def get_days_in_arrears(self, obj):
+        today = datetime.now().date()
+        start_date = obj.start_date
+        dues_paid = obj.dues_paid
+        dues_required_to_ontime = self.get_dues_required_to_ontime(obj)
+        if dues_paid < dues_required_to_ontime:
+            if obj.recurrence == 'weekly':
+                days_in_arrears = (today + timedelta(weeks=dues_paid) - start_date).days
+                if days_in_arrears >= 7:
+                    days_in_arrears -= 7
+            elif obj.recurrence == 'biweekly':
+                days_in_arrears = (today + timedelta(weeks=dues_paid*2) - start_date).days
+                if days_in_arrears >= 14:
+                    days_in_arrears -= 14
+            elif obj.recurrence == 'monthly':
+                days_in_arrears = (today + relativedelta(months=+dues_paid) - start_date).days
+                if days_in_arrears >= 30:
+                    days_in_arrears -= 30
+            elif obj.recurrence == 'daily':
+                days_in_arrears = dues_required_to_ontime
+        else:
+            days_in_arrears = 0
+        return days_in_arrears
 
     def get_payment_today(self, obj):
         today = datetime.now().date()
@@ -47,7 +79,6 @@ class FullLoanSerializer(serializers.ModelSerializer):
                 due_last_date += timedelta(days=1)
                 if due_last_date.weekday() != 6:  # 6 es domingo
                     days_added += 1
-            due_last_date = created_date + timedelta(days=dues)
         elif obj.recurrence == 'weekly':
             due_last_date = created_date + timedelta(weeks=dues)
         elif obj.recurrence == 'monthly':
