@@ -16,6 +16,7 @@ class WalletMovement(models.Model):
     wallet = models.ForeignKey(Wallet, on_delete=models.CASCADE, null=False)
     type = models.CharField(choices=WALLET_MOVEMENT_TYPE_CHOICES, null=False, default='deposit', max_length=255)
     amount = models.DecimalField(max_digits=19, decimal_places=2, null=False)
+    name = models.CharField(max_length=255, null=True)
     reason = models.CharField(max_length=1000, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

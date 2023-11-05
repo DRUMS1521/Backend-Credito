@@ -65,5 +65,5 @@ class Payment(models.Model):
         self.loan.save()
         # Create wallet movement
         destiny_wallet = Wallet.objects.get(user=self.loan.customer.debt_collector)
-        WalletMovement.objects.create(wallet=destiny_wallet, type='deposit', amount=amount, reason=f'Entrada por cobro de prestamo del día {self.created_at} del cliente {self.loan.customer.name} por un monto de {amount} id de prestamo {self.loan.id}')
+        WalletMovement.objects.create(wallet=destiny_wallet, name = 'pago de cuota', type='deposit', amount=amount, reason=f'Entrada por cobro de prestamo del día {self.created_at} del cliente {self.loan.customer.name} por un monto de {amount} id de prestamo {self.loan.id}')
         super(Payment, self).save(*args, **kwargs)

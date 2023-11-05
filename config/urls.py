@@ -21,5 +21,6 @@ urlpatterns = [
     path('auth/', include('app.authentication.urls')),
     path('loans/', include('app.loans.urls')),
     path('core/', include('app.core.urls')),
+    path('accounting/', include('app.accounting.urls')),
 
 ]
