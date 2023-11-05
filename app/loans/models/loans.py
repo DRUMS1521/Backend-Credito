@@ -33,8 +33,9 @@ class Loan(models.Model):
         # Calculate interest amount
         self.interest_amount = self.amount * self.interest_rate
         # Create wallet movement
-        destiny_wallet = Wallet.objects.get(user=self.customer.debt_collector)
-        WalletMovement.objects.create(wallet=destiny_wallet, name = 'pago de cuota', type='loan_out', amount=self.amount, reason=f'Salida por prestamo del cliente {self.customer.name} por un monto de {self.amount}')
+        if self.id == None:
+            destiny_wallet = Wallet.objects.get(user=self.customer.debt_collector)
+            WalletMovement.objects.create(wallet=destiny_wallet, name = 'pago de cuota', type='loan_out', amount=self.amount, reason=f'Salida por prestamo del cliente {self.customer.name} por un monto de {self.amount}')
         super(Loan, self).save(*args, **kwargs)
 
 
