@@ -3,3 +3,4 @@ from .customers import CustomerBasicListAPIView
 from .loans import LoanBasicListAPIView, LoanFullListAPIView
 from .payments import CreatePaymentAPIView
 from .ordering import UpdateLoanOrderingAPIView
+from .markdowns import LoanMarkdownsCreateAPIView, LoanMarkdownsListAPIView

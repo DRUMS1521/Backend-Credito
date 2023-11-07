@@ -9,4 +9,6 @@ urlpatterns = [
     path('loans-full', LoanFullListAPIView.as_view(), name='loans-full'),
     path('<int:loan>/pay', CreatePaymentAPIView.as_view(), name='payments'),
     path('<int:pk>/order/<str:action>', UpdateLoanOrderingAPIView.as_view(), name='order'),
+    path('markdowns/create', LoanMarkdownsCreateAPIView.as_view(), name='markdowns-create'),
+    path('markdowns/list', LoanMarkdownsListAPIView.as_view(), name='markdowns-list'),
 ]

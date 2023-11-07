@@ -116,7 +116,7 @@ class LoanMarkdowns(models.Model):
     id = models.AutoField(primary_key=True)
     loan = models.ForeignKey(Loan, on_delete=models.CASCADE)
     markdown = models.BooleanField(null=False, default=False)
-    apply_to_date = models.DateField(null=False)
+    apply_to_date = models.DateField(null=True)
 
     class Meta:
         verbose_name_plural = 'LoanMarkdowns'
