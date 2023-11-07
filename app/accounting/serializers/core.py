@@ -21,7 +21,7 @@ class WalletSerializer(serializers.ModelSerializer):
         read_only_fields = ('created_at', 'updated_at', 'user')
 
     def get_today_movements(self, obj):
-        movements = WalletMovement.objects.filter(wallet=obj, created_at__date = timezone.now().date())
+        movements = WalletMovement.objects.filter(wallet=obj, created_at__date = timezone.now().date()).order_by('-id')
         serializer = WalletMovementSerializer(movements, many=True)
         return serializer.data
     def get_wallet_movements(self, obj):
