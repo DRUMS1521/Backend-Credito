@@ -14,6 +14,15 @@ class LoanMarkdownsListAPIView(generics.ListAPIView):
         # Search date from query params
         return LoanMarkdowns.objects.filter(loan__customer__debt_collector = self.request.user, markdown=True, apply_to_date=timezone.now().date())
     
+    def get(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        data = []
+        for markdown in queryset:
+            data.append(
+                markdown.id,
+            )
+        return Response(data, status=status.HTTP_200_OK)
+    
 class LoanMarkdownsCreateAPIView(generics.CreateAPIView):
     serializer_class = LoanMarkdownsSerializer
     permission_classes = (IsAuthenticated,)
