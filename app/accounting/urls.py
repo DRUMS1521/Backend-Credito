@@ -7,4 +7,6 @@ urlpatterns = [
     path('deposits', DepositListCreateAPIView.as_view(), name='deposits'),
     #Wallet
     path('wallet', WalletCheckerAPIView.as_view(), name='deposits'),
+    #Daily checkout
+    path('daily-checkout', DailyCheckoutListCreateView.as_view(), name='daily-checkout'),
 ]
