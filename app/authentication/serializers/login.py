@@ -24,8 +24,8 @@ class LoginSerializer(serializers.Serializer):
             return 'admin'
         if user.is_staff:
             return 'staff'
-        if user.user_type == 'client':
-            return 'client'
+        else:
+            return 'collector'
 
     def get_tokens(self, obj):
         user = User.objects.get(email=obj['email'])
