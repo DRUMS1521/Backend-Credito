@@ -122,4 +122,8 @@ class FullLoanSerializer(serializers.ModelSerializer):
                 if created_date.weekday() != 6:
                     days_added += 1
             dues_required_to_ontime = days_added
-        return dues_required_to_ontime
+        dues_left = obj.dues - obj.dues_paid
+        if dues_required_to_ontime > dues_left:
+            return dues_left
+        else:
+            return dues_required_to_ontime
