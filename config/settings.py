@@ -90,7 +90,7 @@ APPEND_SLASH = True
 
 db_name = env.str('DB_NAME', 'drums')
 db_user = env.str('DB_USER', 'cifu')
-db_password = env.str('DB_PASSWORD', 'febreroDe13')
+db_password = env.str('DB_PASSWORD', '#febreroDe13!')
 db_host = env.str('DB_HOST', 'general-testing-ldin.caio4cdm27ia.us-east-1.rds.amazonaws.com')
 db_port = env.str('DB_PORT', '5432')
 
