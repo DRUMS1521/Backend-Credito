@@ -1,8 +1,9 @@
-from app.loans.models import Loan, Payment
+from app.loans.models import Loan, Payment, LoanMarkdowns
 from rest_framework import serializers
 from app.loans.serializers import CustomerFullSerializer
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
+from django.utils import timezone
 
 
 class LoanBasicSerializer(serializers.ModelSerializer):
@@ -24,11 +25,20 @@ class FullLoanSerializer(serializers.ModelSerializer):
     authorized_by_last_name = serializers.CharField(source='authorized_by.last_name', read_only=True)
     who_referred_name = serializers.CharField(source='customer.who_referred.name', read_only=True)
     who_referred_phone = serializers.CharField(source='customer.who_referred.cell_phone_number', read_only=True)
+    has_markdown = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Loan
         fields = '__all__'
         read_only_fields = ('created_at', 'updated_at')
+
+    def get_has_markdown(self, obj):
+        today = timezone.now().date()
+        markdowns = LoanMarkdowns.objects.filter(loan=obj, apply_to_date=today, markdown=True)
+        if markdowns.exists():
+            return True
+        else:
+            return False
 
     def get_today_have_to_pay(self, obj):
         if obj.dues_paid < self.get_dues_required_to_ontime(obj):
