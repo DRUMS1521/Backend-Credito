@@ -21,4 +21,4 @@ class LoanFullListAPIView(ListAPIView):
     pagination_class = None
     def get_queryset(self):
         # Search date from query params
-        return Loan.objects.filter(customer__debt_collector = self.request.user).order_by('id')
+        return Loan.objects.filter(customer__debt_collector = self.request.user).order_by('ordering')
