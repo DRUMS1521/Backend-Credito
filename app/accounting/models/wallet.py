@@ -29,10 +29,12 @@ class WalletMovement(models.Model):
         db_table = 'wallet_movements'
 
     def save(self, *args, **kwargs):
+        amount = abs(self.amount)
         self.last_balance = self.wallet.balance
         if self.type in ['entry', 'loan_in', 'admin_charge']:
             self.wallet.balance += self.amount
         else:
+            amount = amount * -1
             self.wallet.balance -= self.amount
         self.wallet.save()
         self.current_balance = self.wallet.balance

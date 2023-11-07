@@ -13,7 +13,7 @@ class UsersSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'first_name', 'last_name', 'email', 'phone_number', 'address', 'is_active', 'is_superuser', 'password', 'wallet_info']  # Include 'password'
-        extra_kwargs = {'password': {'write_only': True}}
+        extra_kwargs = {'password': {'write_only': True, 'required': False, 'allow_blank': True, 'allow_null': True}}
     
     def get_wallet_info(self, obj):
         wallet = Wallet.objects.filter(user=obj)
