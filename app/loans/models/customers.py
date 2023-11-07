@@ -1,6 +1,7 @@
 from django.db import models
 from app.authentication.models import User
 from app.core.models import UploadedFiles
+from django.utils import timezone
 
 class Customer(models.Model):
     id = models.AutoField(primary_key=True)
@@ -22,7 +23,7 @@ class Customer(models.Model):
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='created_by')
     debt_collector = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='debt_collector')
     is_active = models.BooleanField(default=True, null=False)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:

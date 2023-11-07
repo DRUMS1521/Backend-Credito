@@ -25,7 +25,7 @@ class Loan(models.Model):
     interest_amount_paid = models.DecimalField(null=False, default=0, decimal_places=2, max_digits=10)
     principal_amount_paid = models.DecimalField(null=False, default=0, decimal_places=2, max_digits=10)
     dues_paid = models.IntegerField(null=False, default=0)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
     ordering = models.IntegerField(null=False, default=0)
 
@@ -47,7 +47,7 @@ class Payment(models.Model):
     id = models.AutoField(primary_key=True)
     loan = models.ForeignKey(Loan, on_delete=models.SET_NULL, null=True)
     amount = models.DecimalField(null=False, decimal_places=2, max_digits=10)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:

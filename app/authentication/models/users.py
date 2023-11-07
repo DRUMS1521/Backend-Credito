@@ -3,6 +3,7 @@ from django.contrib.auth.models import (
     AbstractBaseUser, PermissionsMixin)
 from rest_framework_simplejwt.tokens import RefreshToken
 from datetime import datetime, timedelta
+from django.utils import timezone
 
 from app.authentication.models.user_management import UserManager
 
@@ -58,7 +59,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         null = False
     )
     
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(default=timezone.now)
 
     updated_at = models.DateTimeField(auto_now=True)
 

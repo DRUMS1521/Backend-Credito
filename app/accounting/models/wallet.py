@@ -1,10 +1,12 @@
 from django.db import models
 from app.core.constants import WALLET_MOVEMENT_TYPE_CHOICES
+import datetime
+from django.utils import timezone
 
 class Wallet(models.Model):
     user = models.OneToOneField('authentication.User', on_delete=models.CASCADE, null=False, primary_key=True)
     balance = models.DecimalField(max_digits=19, decimal_places=2, null=False, default=0)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
@@ -18,7 +20,7 @@ class WalletMovement(models.Model):
     amount = models.DecimalField(max_digits=19, decimal_places=2, null=False)
     name = models.CharField(max_length=255, null=True)
     reason = models.CharField(max_length=1000, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
     last_balance = models.DecimalField(max_digits=19, decimal_places=2, null=False, default=0)
     current_balance = models.DecimalField(max_digits=19, decimal_places=2, null=False, default=0)
