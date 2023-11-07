@@ -4,6 +4,8 @@ from app.core.models import UploadedFiles
 
 
 class WalletMovementSerializer(serializers.ModelSerializer):
+    type_tag = serializers.CharField(source='get_type_display', read_only=True)
+    proof_url = serializers.URLField(source='proof.file.url', read_only=True)
     class Meta:
         model = WalletMovement
         fields = '__all__'
