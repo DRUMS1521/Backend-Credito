@@ -47,7 +47,7 @@ class FullLoanSerializer(serializers.ModelSerializer):
             return False
 
     def get_days_in_arrears(self, obj):
-        today = datetime.now().date()
+        today = timezone.now().date()
         start_date = obj.start_date
         dues_paid = obj.dues_paid
         dues_required_to_ontime = self.get_dues_required_to_ontime(obj)
@@ -71,7 +71,7 @@ class FullLoanSerializer(serializers.ModelSerializer):
         return days_in_arrears
 
     def get_payment_today(self, obj):
-        today = datetime.now().date()
+        today = timezone.now().date()
         payments = Payment.objects.filter(loan=obj, created_at__date=today)
         if payments.count() > 0:
             # sum payments
@@ -102,7 +102,7 @@ class FullLoanSerializer(serializers.ModelSerializer):
         return due_last_date
     
     def get_dues_required_to_ontime(self, obj):
-        today = datetime.now().date()
+        today = timezone.now().date()
         created_date = obj.start_date
         days_between = (today - created_date).days
         # Remove sunday on daily recurrence

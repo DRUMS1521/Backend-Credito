@@ -20,5 +20,5 @@ class CreatePaymentAPIView(generics.CreateAPIView):
         # Create payment
         payment = serializer.save()
         #TODO: Check if loan is paid
-        return Response({'id': payment.id}, status=status.HTTP_201_CREATED)
+        return Response({'id': payment.id, 'created_at': payment.created_at}, status=status.HTTP_201_CREATED)
 

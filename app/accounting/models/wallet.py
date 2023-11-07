@@ -22,6 +22,7 @@ class WalletMovement(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     last_balance = models.DecimalField(max_digits=19, decimal_places=2, null=False, default=0)
     current_balance = models.DecimalField(max_digits=19, decimal_places=2, null=False, default=0)
+    proof = models.ForeignKey('core.UploadedFiles', on_delete=models.SET_NULL, null=True)
 
     class Meta:
         verbose_name_plural = 'WalletMovements'

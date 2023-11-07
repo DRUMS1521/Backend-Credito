@@ -5,7 +5,10 @@ from app.core.models import UploadedFiles
 from app.loans.models.customers import Customer
 from app.core.constants import LOAN_RECURRENCE_CHOICES
 from app.accounting.models import Wallet, WalletMovement
-import datetime
+from django.utils import timezone
+
+def get_current_date():
+    return timezone.now().date()
 
 class Loan(models.Model):
     id = models.AutoField(primary_key=True)
@@ -17,7 +20,7 @@ class Loan(models.Model):
     recurrence = models.CharField(choices=LOAN_RECURRENCE_CHOICES, null=False, default='daily', max_length=255)
     dues = models.IntegerField(null=True)
     due_amount = models.DecimalField(null=True, decimal_places=2, max_digits=10)
-    start_date = models.DateField(null=False, default=datetime.date.today)
+    start_date = models.DateField(null=False, default=get_current_date)
     #Balance
     interest_amount_paid = models.DecimalField(null=False, default=0, decimal_places=2, max_digits=10)
     principal_amount_paid = models.DecimalField(null=False, default=0, decimal_places=2, max_digits=10)

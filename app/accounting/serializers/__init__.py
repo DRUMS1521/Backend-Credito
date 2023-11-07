@@ -1,1 +1,1 @@
-from .core import SpendSerializer
+from .core import SpendSerializer, DepositSerializer
