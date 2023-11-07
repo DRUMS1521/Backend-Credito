@@ -3,11 +3,14 @@ from app.accounting.models import DailyCheckout
 from django.utils import timezone
 
 class DailyCheckoutSerializer(serializers.ModelSerializer):
+    day = serializers.SerializerMethodField(read_only=True)
     class Meta:
         model = DailyCheckout
         fields = '__all__'
         read_only_fields = ('created_at', 'updated_at')
 
+    def get_day(self, obj):
+        return obj.created_at.date()
     def validate(self, attrs):
         # Validate that the user has not already created a daily checkout today
         today = timezone.now().date()
