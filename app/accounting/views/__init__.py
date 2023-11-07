@@ -1,1 +1,1 @@
-from .core import SpendListCreateAPIView, DepositListCreateAPIView
+from .core import SpendListCreateAPIView, DepositListCreateAPIView, WalletCheckerAPIView

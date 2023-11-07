@@ -1,7 +1,15 @@
 from app.accounting.models import Wallet, WalletMovement
-from app.accounting.serializers import SpendSerializer, DepositSerializer
+from app.accounting.serializers import SpendSerializer, DepositSerializer, WalletSerializer
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
+
+class WalletCheckerAPIView(generics.RetrieveAPIView):
+    serializer_class = WalletSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+    def get_object(self):
+        # Get request user wallet
+        wallet = Wallet.objects.get(user=self.request.user)
+        return wallet
 
 class SpendListCreateAPIView(generics.ListCreateAPIView):
     serializer_class = SpendSerializer
