@@ -18,12 +18,11 @@ class CreatePaymentSerializer(serializers.ModelSerializer):
         loan_due = loan.interest_amount + loan.amount - loan.interest_amount_paid - loan.principal_amount_paid
         if amount > loan_due:
             raise serializers.ValidationError('Amount is greater than loan due')
-        elif amount <= 0:
-            raise serializers.ValidationError('Amount must be greater than 0')
+        #elif amount <= 0:
+        #    raise serializers.ValidationError('Amount must be greater than 0')
         return attrs
     
     def create(self, validated_data):
         # Create payment
         payment = Payment.objects.create(**validated_data)
         return payment
-

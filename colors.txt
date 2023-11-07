@@ -1,0 +1,4 @@
+{
+    morado: #7B52FE
+    verde: #96F59E
+}

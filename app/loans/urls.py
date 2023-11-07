@@ -8,4 +8,5 @@ urlpatterns = [
     path('loans', LoanBasicListAPIView.as_view(), name='loans'),
     path('loans-full', LoanFullListAPIView.as_view(), name='loans-full'),
     path('<int:loan>/pay', CreatePaymentAPIView.as_view(), name='payments'),
+    path('<int:loan>/order<str:action>', UpdateLoanOrderingAPIView.as_view(), name='order'),
 ]

@@ -3,23 +3,23 @@ FILES_TYPE_CHOICES = (
     )
 
 LOAN_RECURRENCE_CHOICES = (
-    ("daily", "daily"),
-    ("weekly", "weekly"),
-    ("biweekly", "biweekly"),
-    ("monthly", "monthly"),
+    ("daily", "Diario"),
+    ("weekly", "Semanal"),
+    ("biweekly", "Quincenal"),
+    ("monthly", "Mensual"),
 )
 
 WALLET_MOVEMENT_TYPE_CHOICES = (
-    ("entry", "entry"),
-    ("exit", "exit"),
-    ("loan_out", "loan_out"),
-    ("loan_in", "loan_in"),
-    ("admin_charge", "admin_charge"),
+    ("entry", "Ingreso"),
+    ("exit", "Gasto"),
+    ("loan_out", "Salida por prestamo"),
+    ("loan_in", "Entrada por prestamo"),
+    ("admin_charge", "Recarga de administracion"),
 )
 
 CUSTOMER_TYPE_CHOICES = (
-    ('new', 'new'),
-    ('old', 'old'),
+    ('new', 'Nuevo'),
+    ('old', 'Antiguo'),
 )
 
 REQUIRED_FIELDS_CUSTOMER_LOAN = {

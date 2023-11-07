@@ -24,6 +24,7 @@ class Loan(models.Model):
     dues_paid = models.IntegerField(null=False, default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    ordering = models.IntegerField(null=False, default=0)
 
     class Meta:
         verbose_name_plural = 'Loans'
@@ -53,21 +54,70 @@ class Payment(models.Model):
     
     def save(self, *args, **kwargs):
         #Check if amount goes to interest or principal, and update loan balance. First customers have to pay interest, then principal
-        amount = self.amount
-        if self.loan.interest_amount_paid < self.loan.interest_amount:
-            if self.loan.interest_amount_paid + amount > self.loan.interest_amount:
-                amount = self.loan.interest_amount - self.loan.interest_amount_paid
-            self.loan.interest_amount_paid += amount
+        if self.amount > 0:
+            amount = self.amount
+            # first pay interest
+            while amount > 0:
+                resting_interests = self.loan.interest_amount - self.loan.interest_amount_paid
+                resting_principal = self.loan.amount - self.loan.principal_amount_paid
+                if resting_interests > 0:
+                    if amount > resting_interests:
+                        amount -= resting_interests
+                        self.loan.interest_amount_paid += resting_interests
+                    else:
+                        self.loan.interest_amount_paid += amount
+                        amount = 0
+                elif resting_principal > 0:
+                    if amount > resting_principal:
+                        amount -= resting_principal
+                        self.loan.principal_amount_paid += resting_principal
+                    else:
+                        self.loan.principal_amount_paid += amount
+                        amount = 0
+                else:
+                    amount = 0
+            self.loan.save()
+
         else:
-            if self.loan.principal_amount_paid + amount > self.loan.amount:
-                amount = self.loan.amount - self.loan.principal_amount_paid
-            self.loan.principal_amount_paid += amount
-        self.loan.save()
-        # Updatedues paid
-        total_paid = self.loan.interest_amount_paid + self.loan.principal_amount_paid
-        self.loan.dues_paid = int(total_paid / self.loan.due_amount)
-        self.loan.save()
+            # If amount is negative, is a discount
+            amount = self.amount
+            # Discount from principal first if is greater than 0 and then from interest. only interests can be negative
+            while amount < 0:
+                if self.loan.principal_amount_paid > 0:
+                    if self.loan.principal_amount_paid + amount < 0:
+                        amount += self.loan.principal_amount_paid
+                        self.loan.principal_amount_paid = 0
+                    else:
+                        self.loan.principal_amount_paid += amount
+                        amount = 0
+                elif self.loan.interest_amount_paid > 0:
+                    if self.loan.interest_amount_paid + amount < 0:
+                        amount += self.loan.interest_amount_paid
+                        self.loan.interest_amount_paid = 0
+                    else:
+                        self.loan.interest_amount_paid += amount
+                        amount = 0
+                else:
+                    amount = 0
+            self.loan.save()
+            # Updatedues paid
+            total_paid = self.loan.interest_amount_paid + self.loan.principal_amount_paid
+            self.loan.dues_paid = int(total_paid / self.loan.due_amount)
+            self.loan.save()
         # Create wallet movement
         destiny_wallet = Wallet.objects.get(user=self.loan.customer.debt_collector)
-        WalletMovement.objects.create(wallet=destiny_wallet, name = 'pago de cuota', type='loan_in', amount=self.amount, reason=f'Entrada por cobro de prestamo del cliente {self.loan.customer.name} por un monto de {amount} id de prestamo {self.loan.id}')
+        if self.amount>0:
+            WalletMovement.objects.create(wallet=destiny_wallet, name = 'pago de cuota', type='loan_in', amount=self.amount, reason=f'Entrada por cobro de prestamo del cliente {self.loan.customer.name} por un monto de {self.amount} id de prestamo {self.loan.id}')
+        else:
+            WalletMovement.objects.create(wallet=destiny_wallet, name = 'pago de cuota', type='loan_out', amount=self.amount, reason=f'Descuento por error {self.loan.customer.name} por un monto de {self.amount*-1} id de prestamo {self.loan.id}')
         super(Payment, self).save(*args, **kwargs)
+
+class LoanMarkdowns(models.Model):
+    id = models.AutoField(primary_key=True)
+    loan = models.ForeignKey(Loan, on_delete=models.CASCADE)
+    markdown = models.BooleanField(null=False, default=False)
+    apply_to_date = models.DateField(null=False)
+
+    class Meta:
+        verbose_name_plural = 'LoanMarkdowns'
+        db_table = 'loan_markdowns'

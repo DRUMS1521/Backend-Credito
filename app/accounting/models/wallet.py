@@ -20,15 +20,19 @@ class WalletMovement(models.Model):
     reason = models.CharField(max_length=1000, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    last_balance = models.DecimalField(max_digits=19, decimal_places=2, null=False, default=0)
+    current_balance = models.DecimalField(max_digits=19, decimal_places=2, null=False, default=0)
 
     class Meta:
         verbose_name_plural = 'WalletMovements'
         db_table = 'wallet_movements'
 
     def save(self, *args, **kwargs):
+        self.last_balance = self.wallet.balance
         if self.type in ['entry', 'loan_in', 'admin_charge']:
             self.wallet.balance += self.amount
         else:
             self.wallet.balance -= self.amount
         self.wallet.save()
+        self.current_balance = self.wallet.balance
         super(WalletMovement, self).save(*args, **kwargs)
