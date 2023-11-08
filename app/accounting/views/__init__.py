@@ -1,3 +1,3 @@
 from .core import SpendListCreateAPIView, DepositListCreateAPIView, WalletCheckerAPIView
 from .daily_check import DailyCheckoutListCreateView
-from .period_clousers import PeriodClosuresListCreateView, PeriodClosuresRetrieveUpdateAPIView, ActualPeriodClosureRetrieveAPIView
+from .period_clousers import PeriodClosuresListCreateView, PeriodClosuresRetrieveUpdateAPIView, ActualPeriodClosureRetrieveAPIView, PeriodClosureCustomCreateView
