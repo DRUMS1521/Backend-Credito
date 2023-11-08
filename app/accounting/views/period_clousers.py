@@ -25,7 +25,6 @@ class PeriodClosuresRetrieveUpdateAPIView(generics.RetrieveUpdateAPIView):
 
 class ActualPeriodClosureRetrieveAPIView(generics.GenericAPIView):
     serializer_class = PeriodClosuresSerializer
-    permission_classes = (IsAuthenticated,)
     pagination_class = None
 
     def get(self, request, *args, **kwargs):
