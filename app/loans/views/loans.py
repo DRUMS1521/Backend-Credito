@@ -23,7 +23,7 @@ class LoanFullListAPIView(ListAPIView):
         if self.request.user.is_superuser:
             # View as other user
             user = self.request.query_params.get('user', None)
-            if user is not None:
+            if user is not None and user != '':
                 return Loan.objects.filter(customer__debt_collector__id=user).order_by('ordering')
             else:
                 return Loan.objects.filter(customer__debt_collector = self.request.user).order_by('ordering')
