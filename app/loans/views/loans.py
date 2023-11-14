@@ -20,5 +20,11 @@ class LoanFullListAPIView(ListAPIView):
     permission_classes = (IsAuthenticated,)
     pagination_class = None
     def get_queryset(self):
-        # Search date from query params
+        if self.request.user.is_superuser:
+            # View as other user
+            user = self.request.query_params.get('user', None)
+            if user is not None:
+                return Loan.objects.filter(customer__debt_collector__id=user).order_by('ordering')
+            else:
+                return Loan.objects.filter(customer__debt_collector = self.request.user).order_by('ordering')
         return Loan.objects.filter(customer__debt_collector = self.request.user).order_by('ordering')
