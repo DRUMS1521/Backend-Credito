@@ -107,5 +107,13 @@ class CustomerLoanSerializer(serializers.Serializer):
             customer = Customer.objects.create(**validated_data['new_customer'])
         else:
             customer = validated_data['old_customer']['customer']
+            #update customer
+            customer.home_address = validated_data['new_customer']['home_address']
+            customer.business_name = validated_data['new_customer']['business_name']
+            customer.business_address = validated_data['new_customer']['business_address']
+            customer.cell_phone_number = validated_data['new_customer']['cell_phone_number']
+            customer.occupation = validated_data['new_customer']['occupation']
+            customer.alias_or_reference = validated_data['new_customer']['alias_or_reference']
+            customer.save()
         loan = Loan.objects.create(customer=customer, **validated_data['loan'])
         return loan
