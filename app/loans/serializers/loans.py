@@ -1,4 +1,5 @@
 from app.loans.models import Loan, Payment, LoanMarkdowns
+from app.loans.serializers.payments import PaymentSerializer
 from rest_framework import serializers
 from app.loans.serializers import CustomerFullSerializer
 from datetime import datetime, timedelta
@@ -26,11 +27,18 @@ class FullLoanSerializer(serializers.ModelSerializer):
     who_referred_name = serializers.CharField(source='customer.who_referred.name', read_only=True)
     who_referred_phone = serializers.CharField(source='customer.who_referred.cell_phone_number', read_only=True)
     has_markdown = serializers.SerializerMethodField(read_only=True)
+    payments = serializers.SerializerMethodField(read_only=True)
+
 
     class Meta:
         model = Loan
         fields = '__all__'
         read_only_fields = ('created_at', 'updated_at')
+
+    def get_payments(self, obj):
+        payments = Payment.objects.filter(loan=obj)
+        serializer = PaymentSerializer(payments, many=True)
+        return serializer.data
 
     def get_has_markdown(self, obj):
         today = timezone.now().date()

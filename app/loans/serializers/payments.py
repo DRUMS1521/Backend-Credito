@@ -26,3 +26,9 @@ class CreatePaymentSerializer(serializers.ModelSerializer):
         # Create payment
         payment = Payment.objects.create(**validated_data)
         return payment
+
+class PaymentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Payment
+        fields = '__all__'
+        read_only_fields = ('created_at', 'updated_at')
