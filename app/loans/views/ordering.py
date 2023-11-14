@@ -1,8 +1,29 @@
-from rest_framework.generics import UpdateAPIView
+from rest_framework.generics import UpdateAPIView, GenericAPIView
 from rest_framework.permissions import IsAuthenticated
 from app.loans.models import Loan
 from rest_framework.response import Response
 from rest_framework import status
+
+class CustomUpdateOrderingLoanAPIView(GenericAPIView):
+    queryset = Loan.objects.all()
+    permission_classes = (IsAuthenticated,)
+    def post(self, request, *args, **kwargs):
+        # Actual ids ordering comes from request data
+        ordering = request.data.get('ordering', None)
+        if ordering is None:
+            return Response({'detail': 'Ordering not found'}, status=status.HTTP_404_NOT_FOUND)
+        # ids comes as a list of ids
+        if not isinstance(ordering, list):
+            return Response({'detail': 'Ordering must be a list'}, status=status.HTTP_400_BAD_REQUEST)
+        # check if all ids are valid
+        for element in ordering:
+            if not Loan.objects.filter(id=element).exists():
+                return Response({'detail': 'Invalid id in ordering list'}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                this_object = Loan.objects.get(id=element)
+                this_object.ordering = ordering.index(element)
+                this_object.save()
+        return Response({'detail': 'Ordering updated successfully'}, status=status.HTTP_200_OK)
 
 class UpdateLoanOrderingAPIView(UpdateAPIView):
     queryset = Loan.objects.all()
