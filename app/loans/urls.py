@@ -13,4 +13,5 @@ urlpatterns = [
     path('order', CustomUpdateOrderingLoanAPIView.as_view(), name='custom-order'),
     path('markdowns/create', LoanMarkdownsCreateAPIView.as_view(), name='markdowns-create'),
     path('markdowns/list', LoanMarkdownsListAPIView.as_view(), name='markdowns-list'),
+    path('customers/add-notes', CustomerAddNotesAPIView.as_view(), name='add-notes'),
 ]

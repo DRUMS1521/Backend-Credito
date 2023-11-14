@@ -1,6 +1,6 @@
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.generics import ListAPIView
-from app.loans.serializers import CustomerBasicSerializer, CustomerCustomSerializer
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.generics import ListAPIView, CreateAPIView
+from app.loans.serializers import CustomerBasicSerializer, CustomerCustomSerializer, CustomerAddNotesSerializer
 from app.loans.models import Customer
 
 class CustomerBasicListAPIView(ListAPIView):
@@ -16,3 +16,8 @@ class AllcustomersBasicListAPIView(ListAPIView):
     pagination_class = None
     def get_queryset(self):
         return Customer.objects.all()
+    
+class CustomerAddNotesAPIView(CreateAPIView):
+    permission_classes = (IsAdminUser,)
+    serializer_class = CustomerAddNotesSerializer
+    queryset = Customer.objects.all()

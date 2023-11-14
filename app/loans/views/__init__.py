@@ -1,5 +1,5 @@
 from .customer_loan import CustomerLoanAPIView
-from .customers import CustomerBasicListAPIView, AllcustomersBasicListAPIView
+from .customers import CustomerBasicListAPIView, AllcustomersBasicListAPIView, CustomerAddNotesAPIView
 from .loans import LoanBasicListAPIView, LoanFullListAPIView
 from .payments import CreatePaymentAPIView
 from .ordering import UpdateLoanOrderingAPIView, CustomUpdateOrderingLoanAPIView

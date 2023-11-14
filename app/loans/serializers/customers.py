@@ -16,3 +16,26 @@ class CustomerFullSerializer(serializers.ModelSerializer):
         model = Customer
         fields = '__all__'
         read_only_fields = ('created_at', 'updated_at')
+
+class CustomerAddNotesSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    notes = serializers.CharField(max_length=1000)
+    class Meta:
+        fields = ('id', 'notes')
+
+    def validate(self, attrs):
+        # Check if customer exists
+        customer = Customer.objects.filter(id=attrs['id'])
+        if not customer.exists():
+            raise serializers.ValidationError('Customer does not exist')
+        attrs['customer'] = customer.first()
+        return attrs
+        
+    
+    def create(self, validated_data):
+        # get customer
+        customer = validated_data['customer']
+        # update notes
+        customer.notes = validated_data['notes']
+        customer.save()
+        return customer
