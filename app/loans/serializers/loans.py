@@ -73,7 +73,7 @@ class FullLoanSerializer(serializers.ModelSerializer):
                 if days_in_arrears >= 30:
                     days_in_arrears -= 30
             elif obj.recurrence == 'daily':
-                days_in_arrears = dues_required_to_ontime
+                days_in_arrears = (today + timedelta(days=dues_paid) - start_date).days
         else:
             days_in_arrears = 0
         return days_in_arrears
