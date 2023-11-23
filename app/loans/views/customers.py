@@ -1,5 +1,5 @@
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
-from rest_framework.generics import ListAPIView, CreateAPIView
+from rest_framework.generics import ListAPIView, CreateAPIView, UpdateAPIView
 from app.loans.serializers import CustomerBasicSerializer, CustomerCustomSerializer, CustomerAddNotesSerializer
 from app.loans.models import Customer
 
@@ -20,4 +20,9 @@ class AllcustomersBasicListAPIView(ListAPIView):
 class CustomerAddNotesAPIView(CreateAPIView):
     permission_classes = (IsAdminUser,)
     serializer_class = CustomerAddNotesSerializer
+    queryset = Customer.objects.all()
+
+class EditCustomerAPIView(UpdateAPIView):
+    permission_classes = (IsAdminUser,)
+    serializer_class = CustomerBasicSerializer
     queryset = Customer.objects.all()
