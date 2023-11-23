@@ -2,6 +2,9 @@ from app.loans.models import Loan
 from app.loans.serializers import LoanBasicSerializer, FullLoanSerializer
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAuthenticated
+from django.utils import timezone
+from django.db.models import Q
+from datetime import timedelta
 
 class LoanBasicListAPIView(ListAPIView):
     serializer_class = LoanBasicSerializer
@@ -19,12 +22,19 @@ class LoanFullListAPIView(ListAPIView):
     serializer_class = FullLoanSerializer
     permission_classes = (IsAuthenticated,)
     pagination_class = None
+
     def get_queryset(self):
-        if self.request.user.is_superuser:
+        user = self.request.user
+        if user.is_superuser:
             # View as other user
-            user = self.request.query_params.get('user', None)
-            if user is not None and user != '':
-                return Loan.objects.filter(customer__debt_collector__id=user).order_by('ordering')
-            else:
-                return Loan.objects.filter(customer__debt_collector = self.request.user).order_by('ordering')
-        return Loan.objects.filter(customer__debt_collector = self.request.user).order_by('ordering')
+            user_id = self.request.query_params.get('user', None)
+            if user_id is not None and user_id != '':
+                user = user_id
+
+        now = timezone.now()
+        case_1 = Q(is_finished=False)
+        case_2 = Q(is_finished=True, finished_at__gte=now - timedelta(hours=12))
+        combined_cases = case_1 | case_2
+
+        return Loan.objects.filter(combined_cases, customer__debt_collector__id=user).order_by('ordering')
+

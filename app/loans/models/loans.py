@@ -7,6 +7,7 @@ from app.core.constants import LOAN_RECURRENCE_CHOICES
 from app.accounting.models import Wallet, WalletMovement
 from django.utils import timezone
 
+
 def get_current_date():
     return timezone.now().date()
 
@@ -28,6 +29,8 @@ class Loan(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
     ordering = models.IntegerField(null=False, default=0)
+    is_finished = models.BooleanField(null=False, default=False)
+    finished_at = models.DateTimeField(null=True)
 
     class Meta:
         verbose_name_plural = 'Loans'
@@ -113,6 +116,13 @@ class Payment(models.Model):
             WalletMovement.objects.create(wallet=destiny_wallet, name = 'pago de cuota', type='loan_in', amount=self.amount, reason=f'Entrada por cobro de prestamo del cliente {self.loan.customer.name} por un monto de {self.amount} id de prestamo {self.loan.id}')
         else:
             WalletMovement.objects.create(wallet=destiny_wallet, name = 'pago de cuota', type='loan_out', amount=self.amount, reason=f'Descuento por error {self.loan.customer.name} por un monto de {self.amount*-1} id de prestamo {self.loan.id}')
+        # Check if loan is finished
+        loan_total = self.loan.interest_amount + self.loan.amount
+        loan_paid = self.loan.interest_amount_paid + self.loan.principal_amount_paid
+        if loan_paid >= loan_total:
+            self.loan.is_finished = True
+            self.loan.finished_at = timezone.now()
+            self.loan.save()
         super(Payment, self).save(*args, **kwargs)
 
 class LoanMarkdowns(models.Model):

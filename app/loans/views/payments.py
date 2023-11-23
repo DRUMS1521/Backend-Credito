@@ -18,7 +18,6 @@ class CreatePaymentAPIView(generics.CreateAPIView):
         serializer = CreatePaymentSerializer(data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
         # Create payment
-        payment = serializer.save()
-        #TODO: Check if loan is paid
+        payment = serializer.save()        
         return Response({'id': payment.id, 'created_at': payment.created_at}, status=status.HTTP_201_CREATED)
 
