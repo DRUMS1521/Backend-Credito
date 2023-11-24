@@ -106,10 +106,10 @@ class Payment(models.Model):
                 else:
                     amount = 0
             self.loan.save()
-            # Updatedues paid
-            total_paid = self.loan.interest_amount_paid + self.loan.principal_amount_paid
-            self.loan.dues_paid = int(total_paid / self.loan.due_amount)
-            self.loan.save()
+        # Updatedues paid
+        total_paid = self.loan.interest_amount_paid + self.loan.principal_amount_paid
+        self.loan.dues_paid = int(total_paid / self.loan.due_amount)
+        self.loan.save()
         # Create wallet movement
         destiny_wallet = Wallet.objects.get(user=self.loan.customer.debt_collector)
         if self.amount>0:
