@@ -35,6 +35,10 @@ class LoanFullListAPIView(ListAPIView):
         case_1 = Q(is_finished=False)
         case_2 = Q(is_finished=True, finished_at__gte=now - timedelta(hours=12))
         combined_cases = case_1 | case_2
+        # search by customer name
+        customer_name = self.request.query_params.get('customer_name', None)
+        if customer_name is not None and customer_name != '':
+            combined_cases &= Q(customer__name__icontains=customer_name)
 
         return Loan.objects.filter(combined_cases, customer__debt_collector__id=user).order_by('ordering')
 
