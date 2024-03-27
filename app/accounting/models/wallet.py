@@ -35,7 +35,7 @@ class WalletMovement(models.Model):
         self.last_balance = self.wallet.balance
         if self.type not in ['entry', 'loan_in', 'admin_charge']:
             amount = amount * -1
-            self.wallet.balance += self.amount
+        self.wallet.balance += self.amount
         self.wallet.save()
         self.current_balance = self.wallet.balance
         super(WalletMovement, self).save(*args, **kwargs)
