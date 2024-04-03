@@ -40,5 +40,5 @@ class LoanFullListAPIView(ListAPIView):
         if customer_name is not None and customer_name != '':
             combined_cases &= Q(customer__name__icontains=customer_name)
 
-        return Loan.objects.filter(combined_cases, customer__debt_collector__id=user).order_by('ordering')
+        return Loan.objects.filter(combined_cases, customer__debt_collector__id=user).order_by('ordering', 'id')
 
