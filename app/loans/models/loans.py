@@ -6,10 +6,13 @@ from app.loans.models.customers import Customer
 from app.core.constants import LOAN_RECURRENCE_CHOICES
 from app.accounting.models import Wallet, WalletMovement
 from django.utils import timezone
+#uuid
+import uuid
 
 
 def get_current_date():
     return timezone.now().date()
+
 
 class Loan(models.Model):
     id = models.AutoField(primary_key=True)
@@ -31,6 +34,7 @@ class Loan(models.Model):
     ordering = models.IntegerField(null=False, default=0)
     is_finished = models.BooleanField(null=False, default=False)
     finished_at = models.DateTimeField(null=True)
+    code = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 
     class Meta:
         verbose_name_plural = 'Loans'
