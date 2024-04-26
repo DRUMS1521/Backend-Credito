@@ -30,6 +30,10 @@ class LoanFullListAPIView(ListAPIView):
             user_id = self.request.query_params.get('user', None)
             if user_id is not None and user_id != '':
                 user = user_id
+            else:
+                user_id = user.id
+        else:
+            user_id = user.id
 
         now = timezone.now()
         case_1 = Q(is_finished=False)
@@ -39,6 +43,5 @@ class LoanFullListAPIView(ListAPIView):
         customer_name = self.request.query_params.get('customer_name', None)
         if customer_name is not None and customer_name != '':
             combined_cases &= Q(customer__name__icontains=customer_name)
-
         return Loan.objects.filter(combined_cases, customer__debt_collector__id=user_id).order_by('ordering', 'id')
 
