@@ -1,10 +1,15 @@
-from rest_framework.generics import CreateAPIView, ListCreateAPIView
+from rest_framework.generics import CreateAPIView, ListCreateAPIView, GenericAPIView
 from rest_framework.parsers import MultiPartParser, FormParser
 from app.core.serializers import UploadFileSerializer, InfoAndRulesSerializer
 from app.core.models import UploadedFiles, InfoAndRules
 from rest_framework import permissions
 from rest_framework.response import Response
 from rest_framework import status
+
+class healthCheckAPIView(GenericAPIView):
+    def get(self, request, *args, **kwargs):
+        return Response({'status': 'ok'}, status=status.HTTP_200_OK)
+    
 
 class uploadFileAPIView(CreateAPIView):
     queryset = UploadedFiles.objects.all()
