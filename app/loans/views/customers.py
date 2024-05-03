@@ -8,14 +8,6 @@ class CustomerBasicListAPIView(ListAPIView):
     serializer_class = CustomerBasicSerializer
     pagination_class = None
     def get_queryset(self):
-        return Customer.objects.filter(debt_collector=self.request.user)
-    
-class AllcustomersBasicListAPIView(ListAPIView):
-    permission_classes = (IsAuthenticated,)
-    serializer_class = CustomerCustomSerializer
-    pagination_class = None
-
-    def get_queryset(self):
         queryset = Customer.objects.all()
         # get filter params
         name = self.request.query_params.get('name', None)
@@ -28,6 +20,13 @@ class AllcustomersBasicListAPIView(ListAPIView):
         if document is not None and document != '':
             queryset = queryset.filter(document__icontains=document)
         return queryset
+    
+class AllcustomersBasicListAPIView(ListAPIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = CustomerCustomSerializer
+    pagination_class = None
+    def get_queryset(self):
+        return Customer.objects.all()
     
 class CustomerAddNotesAPIView(CreateAPIView):
     permission_classes = (IsAdminUser,)
