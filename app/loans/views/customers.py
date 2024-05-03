@@ -19,9 +19,9 @@ class CustomerBasicListAPIView(ListAPIView):
         if phone is not None and phone != '':
             queryset = queryset.filter(phone__icontains=phone)
         if document_like is not None and document_like != '':
-            queryset = queryset.filter(document__icontains=document_like)
+            queryset = queryset.filter(document_number__icontains=document_like)
         if document is not None and document != '':
-            queryset = queryset.filter(document=document)
+            queryset = queryset.filter(document_number=document)
         return queryset
     
 class AllcustomersBasicListAPIView(ListAPIView):
