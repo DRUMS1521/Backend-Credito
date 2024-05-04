@@ -114,6 +114,9 @@ class CustomerLoanSerializer(serializers.Serializer):
             customer.cell_phone_number = validated_data['new_customer']['cell_phone_number']
             customer.occupation = validated_data['new_customer']['occupation']
             customer.alias_or_reference = validated_data['new_customer']['alias_or_reference']
+            customer.identity_document = validated_data['new_customer']['identity_document'] if validated_data['new_customer']['identity_document'] else customer.identity_document
+            customer.business_photo = validated_data['new_customer']['business_photo'] if validated_data['new_customer']['business_photo'] else customer.business_photo
+            customer.business_document = validated_data['new_customer']['business_document'] if validated_data['new_customer']['business_document'] else customer.business_document
             customer.save()
         loan = Loan.objects.create(customer=customer, **validated_data['loan'])
         return loan
