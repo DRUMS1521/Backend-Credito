@@ -1,10 +1,16 @@
-from rest_framework.generics import CreateAPIView, ListCreateAPIView, GenericAPIView
+from rest_framework.generics import CreateAPIView, ListCreateAPIView, GenericAPIView, ListAPIView
 from rest_framework.parsers import MultiPartParser, FormParser
-from app.core.serializers import UploadFileSerializer, InfoAndRulesSerializer
-from app.core.models import UploadedFiles, InfoAndRules
+from app.core.serializers import UploadFileSerializer, InfoAndRulesSerializer, CustomConfigSerializer
+from app.core.models import UploadedFiles, InfoAndRules, CustomConfig
 from rest_framework import permissions
 from rest_framework.response import Response
 from rest_framework import status
+
+class CustomConfigAPIView(ListAPIView):
+    queryset = CustomConfig.objects.all()
+    serializer_class = CustomConfigSerializer
+    pagination_class = None
+    permission_classes = (permissions.IsAuthenticated,)
 
 class healthCheckAPIView(GenericAPIView):
     def get(self, request, *args, **kwargs):

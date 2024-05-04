@@ -1,7 +1,12 @@
 from rest_framework import serializers
 from app.authentication.models import User
-from app.core.models import UploadedFiles, InfoAndRules
+from app.core.models import UploadedFiles, InfoAndRules, CustomConfig
 from app.core.constants import FILES_TYPE_CHOICES
+
+class CustomConfigSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomConfig
+        fields = '__all__'
 
 class UploadFileSerializer(serializers.ModelSerializer):
 
