@@ -15,10 +15,15 @@ class ListAdminUsersAPIView(ListAPIView):
         return User.objects.filter(is_superuser=True) | User.objects.filter(is_staff=True)
 
 class ListCreateUsersAPIView(ListCreateAPIView):
-    permission_classes = (IsAdminUser,)
     serializer_class = UsersSerializer
     pagination_class = None
     queryset = User.objects.all()
+
+    def get_permissions(self):
+        if self.request.method == 'GET':
+            return [IsAuthenticated()]
+        else:
+            return [IsAdminUser()]
 
 class UpdateUsersAPIView(UpdateAPIView):
     permission_classes = (IsAdminUser,)
