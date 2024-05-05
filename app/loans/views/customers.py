@@ -23,7 +23,7 @@ class CustomerBasicListAPIView(ListAPIView):
             queryset = queryset.filter(document_number__icontains=document_like)
         if document is not None and document != '' and document != 'null':
             queryset = queryset.filter(document_number=document)
-        if debt_collector is not None and debt_collector != '' and debt_collector != 'null':
+        if debt_collector is not None and debt_collector != '' and debt_collector != 'null' and debt_collector != 'all':
             queryset = queryset.filter(debt_collector__id=debt_collector)
         return queryset
     
