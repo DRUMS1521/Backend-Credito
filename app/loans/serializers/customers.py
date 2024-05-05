@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from app.loans.models import Customer
+from app.loans.models import Customer, Loan
 
 class CustomerBasicSerializer(serializers.ModelSerializer):
     photo_url = serializers.URLField(source='photo.file.url', read_only=True)
@@ -10,8 +10,8 @@ class CustomerBasicSerializer(serializers.ModelSerializer):
         read_only_fields = ('created_at', 'updated_at')
     
     def get_loans_qty_state(self, obj):
-        active = obj.loans.filter(is_finished=False).count()
-        finished = obj.loans.filter(is_finished=True).count()
+        active = Loan.objects.filter(is_finished=False, customer=obj).count()
+        finished = Loan.objects.filter(is_finished=True, customer=obj).count()
         return {'active': active, 'finished': finished}
 
 class CustomerFullSerializer(serializers.ModelSerializer):
