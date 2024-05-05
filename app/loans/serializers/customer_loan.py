@@ -28,6 +28,7 @@ class CustomerLoanSerializer(serializers.Serializer):
     recurrence = serializers.ChoiceField(choices=LOAN_RECURRENCE_CHOICES, required=True)
     dues = serializers.IntegerField(required=False, allow_null=True)
     due_amount = serializers.DecimalField(required=False, decimal_places=2, max_digits=10, allow_null=True)
+    photo = serializers.PrimaryKeyRelatedField(queryset=UploadedFiles.objects.all(), required=False, allow_null=True)
 
     class Meta:
         fields = '__all__'
