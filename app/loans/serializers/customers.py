@@ -9,7 +9,7 @@ class CustomerBasicSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ('created_at', 'updated_at')
     
-    def get_active_loans(self, obj):
+    def get_loans_qty_state(self, obj):
         active = obj.loans.filter(is_finished=False).count()
         finished = obj.loans.filter(is_finished=True).count()
         return {'active': active, 'finished': finished}
