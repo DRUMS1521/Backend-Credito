@@ -17,6 +17,7 @@ class Customer(models.Model):
     who_referred = models.ForeignKey('self', on_delete=models.SET_NULL, null=True)
     business_location = models.CharField(max_length=255, null=True)
     home_location = models.CharField(max_length=255, null=True)
+    photo = models.ForeignKey(UploadedFiles, on_delete=models.CASCADE, null=True, related_name='photo')
     identity_document = models.ForeignKey(UploadedFiles, on_delete=models.CASCADE, null=True, related_name='identity_document')
     business_photo = models.ForeignKey(UploadedFiles, on_delete=models.CASCADE, null=True, related_name='business_photo')
     business_document = models.ForeignKey(UploadedFiles, on_delete=models.CASCADE, null=True, related_name='business_document')

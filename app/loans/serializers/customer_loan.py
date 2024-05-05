@@ -80,6 +80,7 @@ class CustomerLoanSerializer(serializers.Serializer):
                 'who_referred': attrs.get('who_referred'),
                 'business_location': attrs.get('business_location'),
                 'home_location': attrs.get('home_location'),
+                'photo': attrs.get('photo'),
                 'identity_document': attrs.get('identity_document'),
                 'business_photo': attrs.get('business_photo'),
                 'business_document': attrs.get('business_document'),
@@ -114,6 +115,7 @@ class CustomerLoanSerializer(serializers.Serializer):
             customer.cell_phone_number = validated_data['new_customer']['cell_phone_number']
             customer.occupation = validated_data['new_customer']['occupation']
             customer.alias_or_reference = validated_data['new_customer']['alias_or_reference']
+            customer.photo = validated_data['new_customer']['photo'] if validated_data['new_customer']['photo'] else customer.photo
             customer.identity_document = validated_data['new_customer']['identity_document'] if validated_data['new_customer']['identity_document'] else customer.identity_document
             customer.business_photo = validated_data['new_customer']['business_photo'] if validated_data['new_customer']['business_photo'] else customer.business_photo
             customer.business_document = validated_data['new_customer']['business_document'] if validated_data['new_customer']['business_document'] else customer.business_document
