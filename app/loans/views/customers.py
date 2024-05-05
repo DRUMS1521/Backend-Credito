@@ -15,15 +15,15 @@ class CustomerBasicListAPIView(ListAPIView):
         document_like = self.request.query_params.get('document_like', None)
         document = self.request.query_params.get('document', None)
         debt_collector = self.request.query_params.get('debt_collector', None)
-        if name is not None and name != '':
+        if name is not None and name != '' and name != 'null':
             queryset = queryset.filter(name__icontains=name)
-        if phone is not None and phone != '':
+        if phone is not None and phone != '' and phone != 'null':
             queryset = queryset.filter(phone__icontains=phone)
-        if document_like is not None and document_like != '':
+        if document_like is not None and document_like != '' and document_like != 'null':
             queryset = queryset.filter(document_number__icontains=document_like)
-        if document is not None and document != '':
+        if document is not None and document != '' and document != 'null':
             queryset = queryset.filter(document_number=document)
-        if debt_collector is not None and debt_collector != '':
+        if debt_collector is not None and debt_collector != '' and debt_collector != 'null':
             queryset = queryset.filter(debt_collector__id=debt_collector)
         return queryset
     
