@@ -3,10 +3,16 @@ from app.loans.models import Customer
 
 class CustomerBasicSerializer(serializers.ModelSerializer):
     photo_url = serializers.URLField(source='photo.file.url', read_only=True)
+    loans_qty_state = serializers.SerializerMethodField(read_only=True)
     class Meta:
         model = Customer
         fields = '__all__'
         read_only_fields = ('created_at', 'updated_at')
+    
+    def get_active_loans(self, obj):
+        active = obj.loans.filter(is_finished=False).count()
+        finished = obj.loans.filter(is_finished=True).count()
+        return {'active': active, 'finished': finished}
 
 class CustomerFullSerializer(serializers.ModelSerializer):
     identity_document_url = serializers.URLField(source='identity_document.file.url', read_only=True)
