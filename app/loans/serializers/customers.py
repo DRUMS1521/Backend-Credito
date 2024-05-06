@@ -1,9 +1,14 @@
 from rest_framework import serializers
 from app.loans.models import Customer, Loan
+from app.core.models import UploadedFiles
 
 class CustomerBasicSerializer(serializers.ModelSerializer):
     photo_url = serializers.URLField(source='photo.file.url', read_only=True)
     loans_qty_state = serializers.SerializerMethodField(read_only=True)
+    photo = serializers.PrimaryKeyRelatedField(queryset=UploadedFiles.objects.all())
+    identity_document = serializers.PrimaryKeyRelatedField(queryset=UploadedFiles.objects.all())
+    business_photo = serializers.PrimaryKeyRelatedField(queryset=UploadedFiles.objects.all())
+    business_document = serializers.PrimaryKeyRelatedField(queryset=UploadedFiles.objects.all())
     class Meta:
         model = Customer
         fields = '__all__'
