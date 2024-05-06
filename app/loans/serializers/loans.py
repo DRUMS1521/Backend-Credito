@@ -5,7 +5,18 @@ from app.loans.serializers.customers import CustomerFullSerializer
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 from django.utils import timezone
+from django.db.models import Sum, F, ExpressionWrapper, fields
+from decimal import Decimal
 
+def calculate_due_date(start_date, recurrence, dues):
+    if recurrence == 'daily':
+        return start_date + timedelta(days=dues)
+    elif recurrence == 'weekly':
+        return start_date + timedelta(weeks=dues)
+    elif recurrence == 'biweekly':
+        return start_date + timedelta(weeks=2*dues)
+    elif recurrence == 'monthly':
+        return start_date + timedelta(days=30*dues)  # Simplificación
 
 class LoanBasicSerializer(serializers.ModelSerializer):
     customer_name = serializers.CharField(source='customer.name', read_only=True)
@@ -138,14 +149,44 @@ class FullLoanSerializer(serializers.ModelSerializer):
             return dues_required_to_ontime
 
 class CustomerCustomSerializer(serializers.ModelSerializer):
+    photo_url = serializers.URLField(source='photo.file.url', read_only=True)
     identity_document_url = serializers.URLField(source='identity_document.file.url', read_only=True)
-    business_photo = serializers.URLField(source='business_photo.file.url', read_only=True)
-    business_document = serializers.URLField(source='business_document.file.url', read_only=True)
+    business_photo_url = serializers.URLField(source='business_photo.file.url', read_only=True)
+    business_document_url = serializers.URLField(source='business_document.file.url', read_only=True)
     who_referred_name = serializers.CharField(source='who_referred.name', read_only=True)
     debt_collector_first_name = serializers.CharField(source='debt_collector.first_name', read_only=True)
     debt_collector_last_name = serializers.CharField(source='debt_collector.last_name', read_only=True)
     loans = serializers.SerializerMethodField(read_only=True)
+    customer_score = serializers.SerializerMethodField(read_only=True)
 
+    def get_customer_score(self, obj):
+        customer = obj
+        loans = Loan.objects.filter(customer=customer)
+        total_score = 0
+
+        for loan in loans:
+            payments = Payment.objects.filter(loan=loan)
+            total_payments = payments.aggregate(total_paid=Sum('amount'))['total_paid'] or 0
+            expected_total = loan.amount + (loan.amount * loan.interest_rate)
+
+            # Calcular la puntualidad de pagos
+            on_time_payments = 0
+            for i in range(loan.dues):
+                due_date = calculate_due_date(loan.start_date, loan.recurrence, i+1)
+                if payments.filter(created_at__lte=due_date).exists():
+                    on_time_payments += 1
+
+            payment_timeliness_score = (on_time_payments / loan.dues * 100) if loan.dues else 100
+            payment_completion_score = (total_payments / expected_total * 100) if expected_total else 100
+
+            # Promedio ponderado de los puntajes
+            loan_score = (Decimal(payment_timeliness_score) * Decimal(0.7) + Decimal(payment_completion_score * Decimal(0.3)))
+            total_score += loan_score
+
+        # Promedio de puntajes de todos los préstamos
+        final_score = total_score / loans.count() if loans.count() else 0
+        return final_score
+        
     def get_loans(self, obj):
         loans = Loan.objects.filter(customer=obj)
         serializer = FullLoanSerializer(loans, many=True)
