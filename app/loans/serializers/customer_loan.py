@@ -99,7 +99,7 @@ class CustomerLoanSerializer(serializers.Serializer):
                 'dues': attrs.get('dues'),
                 'due_amount': attrs.get('due_amount'),
                 'start_date': attrs.get('start_date'),
-                'ordering': 1
+                'ordering': 0
             }
         }
         return new_attrs
