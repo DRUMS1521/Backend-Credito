@@ -19,7 +19,7 @@ class LoanBasicListAPIView(ListAPIView):
         if date is not None:
             query =  query.filter(created_at__date=date)
         if user.is_superuser or user.is_staff:
-            if collector is not None and collector != '':
+            if collector is not None and collector != '' and collector != '0' and collector !=0 and collector!='all':
                 query = query.filter(collector__id=collector)
             else:
                 query = query.filter(collector=user)

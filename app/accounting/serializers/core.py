@@ -35,6 +35,9 @@ class SpendSerializer(serializers.ModelSerializer):
         required = True,
         allow_null = False
     )
+    proof_url = serializers.URLField(source='proof.file.url', read_only=True)
+    first_name = serializers.CharField(source='wallet.user.first_name', read_only=True)
+    last_name = serializers.CharField(source='wallet.user.last_name', read_only=True)
     class Meta:
         model = WalletMovement
         fields = '__all__'
