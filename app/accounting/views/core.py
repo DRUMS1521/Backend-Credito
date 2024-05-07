@@ -16,14 +16,25 @@ class SpendListCreateAPIView(generics.ListCreateAPIView):
     permission_classes = (permissions.IsAuthenticated,)
     pagination_class = None
     def get_queryset(self):
-        # Get request user wallet
-        wallet = Wallet.objects.get(user=self.request.user)
+        user = self.request.user
         # Get date from query params
         date = self.request.query_params.get('date', None)
+        # Get user from query params if user is staff
+        if user.is_staff | user.is_superuser:
+            requested_user = self.request.query_params.get('user', None)
+            if requested_user is not None and requested_user != '' and requested_user != '0' and requested_user != 0 and requested_user != 'all':
+                usr = requested_user
+            else:
+                usr = user.id
+        else:
+            usr = user.id
+        # Get request user wallet
+        wallet = Wallet.objects.get(user__id=usr)
         if date is not None:
             return WalletMovement.objects.filter(wallet=wallet, created_at__date=date, type='exit')
         else:
             return WalletMovement.objects.filter(wallet=wallet, type='exit')
+
     def post(self, request, *args, **kwargs):
         serializer = SpendSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
