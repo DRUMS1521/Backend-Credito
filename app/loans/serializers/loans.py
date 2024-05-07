@@ -20,6 +20,8 @@ def calculate_due_date(start_date, recurrence, dues):
 
 class LoanBasicSerializer(serializers.ModelSerializer):
     customer_name = serializers.CharField(source='customer.name', read_only=True)
+    debt_collector_first_name = serializers.CharField(source='collector.first_name', read_only=True)
+    debt_collector_last_name = serializers.CharField(source='collector.last_name', read_only=True)
     class Meta:
         model = Loan
         fields = '__all__'
@@ -154,8 +156,8 @@ class CustomerCustomSerializer(serializers.ModelSerializer):
     business_photo_url = serializers.URLField(source='business_photo.file.url', read_only=True)
     business_document_url = serializers.URLField(source='business_document.file.url', read_only=True)
     who_referred_name = serializers.CharField(source='who_referred.name', read_only=True)
-    debt_collector_first_name = serializers.CharField(source='debt_collector.first_name', read_only=True)
-    debt_collector_last_name = serializers.CharField(source='debt_collector.last_name', read_only=True)
+    collector_first_name = serializers.CharField(source='collector.first_name', read_only=True)
+    collector_last_name = serializers.CharField(source='collector.last_name', read_only=True)
     loans = serializers.SerializerMethodField(read_only=True)
     customer_score = serializers.SerializerMethodField(read_only=True)
 

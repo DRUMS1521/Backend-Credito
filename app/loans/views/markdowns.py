@@ -12,7 +12,7 @@ class LoanMarkdownsListAPIView(generics.ListAPIView):
     pagination_class = None
     def get_queryset(self):
         # Search date from query params
-        return LoanMarkdowns.objects.filter(loan__customer__debt_collector = self.request.user, markdown=True, apply_to_date=timezone.now().date())
+        return LoanMarkdowns.objects.filter(loan__collector = self.request.user, markdown=True, apply_to_date=timezone.now().date())
     
     def get(self, request, *args, **kwargs):
         queryset = self.get_queryset()

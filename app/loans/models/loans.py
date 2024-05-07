@@ -35,6 +35,7 @@ class Loan(models.Model):
     is_finished = models.BooleanField(null=False, default=False)
     finished_at = models.DateTimeField(null=True)
     code = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    collector = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='collector')
 
     class Meta:
         verbose_name_plural = 'Loans'
@@ -45,7 +46,7 @@ class Loan(models.Model):
         self.interest_amount = self.amount * self.interest_rate
         # Create wallet movement
         if self.id == None:
-            destiny_wallet = Wallet.objects.get(user=self.customer.debt_collector)
+            destiny_wallet = Wallet.objects.get(user=self.collector)
             WalletMovement.objects.create(wallet=destiny_wallet, name = 'pago de cuota', type='loan_out', amount=self.amount, reason=f'Salida por prestamo del cliente {self.customer.name} por un monto de {self.amount}')
         super(Loan, self).save(*args, **kwargs)
 
@@ -115,7 +116,7 @@ class Payment(models.Model):
         self.loan.dues_paid = int(total_paid / self.loan.due_amount)
         self.loan.save()
         # Create wallet movement
-        destiny_wallet = Wallet.objects.get(user=self.loan.customer.debt_collector)
+        destiny_wallet = Wallet.objects.get(user=self.loan.collector)
         if self.amount>0:
             WalletMovement.objects.create(wallet=destiny_wallet, name = 'pago de cuota', type='loan_in', amount=self.amount, reason=f'Entrada por cobro de prestamo del cliente {self.loan.customer.name} por un monto de {self.amount} id de prestamo {self.loan.id}')
         else:

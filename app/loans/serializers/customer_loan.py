@@ -86,7 +86,6 @@ class CustomerLoanSerializer(serializers.Serializer):
                 'business_photo': attrs.get('business_photo'),
                 'business_document': attrs.get('business_document'),
                 'created_by': attrs.get('created_by'),
-                'debt_collector': attrs.get('debt_collector'),
             },
             'old_customer': {
                 'customer': attrs.get('customer'),
@@ -99,7 +98,8 @@ class CustomerLoanSerializer(serializers.Serializer):
                 'dues': attrs.get('dues'),
                 'due_amount': attrs.get('due_amount'),
                 'start_date': attrs.get('start_date'),
-                'ordering': 0
+                'ordering': 0,
+                'collector': attrs.get('debt_collector'),
             }
         }
         return new_attrs
