@@ -1,5 +1,5 @@
 FILES_TYPE_CHOICES = ( 
-    ("customer_images", "customer_images"), 
+    ("customer_images", "customer_images"),
     )
 
 LOAN_RECURRENCE_CHOICES = (

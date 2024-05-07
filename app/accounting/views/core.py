@@ -31,9 +31,9 @@ class SpendListCreateAPIView(generics.ListCreateAPIView):
         # Get request user wallet
         wallet = Wallet.objects.get(user__id=usr)
         if date is not None:
-            return WalletMovement.objects.filter(wallet=wallet, created_at__date=date, type='exit')
+            return WalletMovement.objects.filter(wallet=wallet, created_at__date=date, type='exit').order_by('-id')
         else:
-            return WalletMovement.objects.filter(wallet=wallet, type='exit')
+            return WalletMovement.objects.filter(wallet=wallet, type='exit').order_by('-id')
 
     def post(self, request, *args, **kwargs):
         serializer = SpendSerializer(data=request.data, context={'request': request})
