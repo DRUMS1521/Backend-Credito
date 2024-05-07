@@ -11,12 +11,23 @@ class LoanBasicListAPIView(ListAPIView):
     permission_classes = (IsAuthenticated,)
     pagination_class = None
     def get_queryset(self):
+        user = self.request.user
+        query = Loan.objects.all()
+        collector = self.request.query_params.get('user', None)
         # Search date from query params
         date = self.request.query_params.get('date', None)
         if date is not None:
-            return Loan.objects.filter(created_at__date=date, collector = self.request.user)
+            query =  query.filter(created_at__date=date)
+        if user.is_superuser or user.is_staff:
+            if collector is not None and collector != '':
+                query = query.filter(collector__id=collector)
+            else:
+                query = query.filter(collector=user)
         else:
-            return Loan.objects.filter(collector = self.request.user)
+            query = query.filter(collector=user)
+        return query.order_by('-id')
+        
+
         
 class LoanFullListAPIView(ListAPIView):
     serializer_class = FullLoanSerializer
