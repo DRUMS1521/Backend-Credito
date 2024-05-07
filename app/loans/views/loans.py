@@ -14,9 +14,9 @@ class LoanBasicListAPIView(ListAPIView):
         # Search date from query params
         date = self.request.query_params.get('date', None)
         if date is not None:
-            return Loan.objects.filter(created_at__date=date, customer__debt_collector = self.request.user)
+            return Loan.objects.filter(created_at__date=date, collector = self.request.user)
         else:
-            return Loan.objects.filter(customer__debt_collector = self.request.user)
+            return Loan.objects.filter(collector = self.request.user)
         
 class LoanFullListAPIView(ListAPIView):
     serializer_class = FullLoanSerializer
@@ -43,5 +43,5 @@ class LoanFullListAPIView(ListAPIView):
         customer_name = self.request.query_params.get('customer_name', None)
         if customer_name is not None and customer_name != '':
             combined_cases &= Q(customer__name__icontains=customer_name)
-        return Loan.objects.filter(combined_cases, customer__debt_collector__id=user_id).order_by('ordering', '-id')
+        return Loan.objects.filter(combined_cases, collector__id=user_id).order_by('ordering', '-id')
 
