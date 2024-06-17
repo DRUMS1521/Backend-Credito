@@ -17,3 +17,4 @@ class DailyCheckoutSerializer(serializers.ModelSerializer):
         if DailyCheckout.objects.filter(user=attrs['user'], created_at__date=today).exists():
             raise serializers.ValidationError('Ya has hecho un cierre de caja hoy')
         return super().validate(attrs)
+

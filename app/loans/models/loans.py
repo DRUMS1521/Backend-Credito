@@ -6,6 +6,8 @@ from app.loans.models.customers import Customer
 from app.core.constants import LOAN_RECURRENCE_CHOICES
 from app.accounting.models import Wallet, WalletMovement
 from django.utils import timezone
+import datetime
+import math
 #uuid
 import uuid
 
@@ -47,8 +49,79 @@ class Loan(models.Model):
         # Create wallet movement
         if self.id == None:
             destiny_wallet = Wallet.objects.get(user=self.collector)
-            WalletMovement.objects.create(wallet=destiny_wallet, name = 'pago de cuota', type='loan_out', amount=self.amount, reason=f'Salida por prestamo del cliente {self.customer.name} por un monto de {self.amount}')
+            WalletMovement.objects.create(wallet=destiny_wallet, name = 'Nuevo prestamo', type='new_loan', amount=self.amount, reason=f'Salida por prestamo del cliente {self.customer.name} por un monto de {self.amount}')
         super(Loan, self).save(*args, **kwargs)
+
+    def get_end_date(self):
+        start_date = self.start_date
+        dues = self.dues
+        if self.recurrence == 'daily':
+            end_date = start_date + datetime.timedelta(days=(dues-1))
+        elif self.recurrence == 'weekly':
+            end_date = start_date + datetime.timedelta(weeks=(dues-1))
+        elif self.recurrence == 'biweekly':
+            end_date = start_date + datetime.timedelta(weeks=(dues-1)*2)
+        elif self.recurrence == 'monthly':
+            end_date = start_date + datetime.timedelta(months=(dues-1))
+        return end_date
+    
+    def get_arrears(self):
+        # this function returns the days in arrears, the number of dues in arrears and the amount in arrears
+        if self.recurrence == 'daily':
+            # Get the simulated date of the last payment according to the dues
+            if self.dues_paid == 0:
+                last_payment = self.start_date
+            else:
+                last_payment = self.start_date + datetime.timedelta(days=(self.dues_paid-1))
+            # Get the difference between the last payment and today
+            days = (timezone.now().date() - last_payment).days
+            # check if is lower than 1
+            if days < 1:
+                return 0, 0, 0
+            else:
+                # divide by 7, we need to remove sunday
+                number_of_sundays = math.floor(days/7)
+                days -= number_of_sundays
+                return days, days, days*self.due_amount
+        elif self.recurrence == 'weekly':
+            # Get the simulated date of the last payment according to the dues
+            if self.dues_paid == 0:
+                last_payment = self.start_date
+            else:
+                last_payment = self.start_date + datetime.timedelta(weeks=(self.dues_paid-1))
+            # Get the difference between the last payment and today
+            days = (timezone.now().date() - last_payment).days
+            # check if is lower than 7
+            if days < 7:
+                return 0, 0, 0
+            else:
+                return days, math.floor(days/7), math.floor(days/7)*self.due_amount
+        elif self.recurrence == 'biweekly':
+            # Get the simulated date of the last payment according to the dues
+            if self.dues_paid == 0:
+                last_payment = self.start_date
+            else:
+                last_payment = self.start_date + datetime.timedelta(weeks=(self.dues_paid-1)*2)
+            # Get the difference between the last payment and today
+            days = (timezone.now().date() - last_payment).days
+            # check if is lower than 14
+            if days < 14:
+                return 0, 0, 0
+            else:
+                return days, math.floor(days/14), math.floor(days/14)*self.due_amount
+        elif self.recurrence == 'monthly':
+            # Get the simulated date of the last payment according to the dues
+            if self.dues_paid == 0:
+                last_payment = self.start_date
+            else:
+                last_payment = self.start_date + datetime.timedelta(months=(self.dues_paid-1))
+            # Get the difference between the last payment and today
+            days = (timezone.now().date() - last_payment).days
+            # check if is lower than 30
+            if days < 30:
+                return 0, 0, 0
+            else:
+                return days, math.floor(days/30), math.floor(days/30)*self.due_amount
 
 
 class Payment(models.Model):
@@ -120,7 +193,7 @@ class Payment(models.Model):
         if self.amount>0:
             WalletMovement.objects.create(wallet=destiny_wallet, name = 'pago de cuota', type='loan_in', amount=self.amount, reason=f'Entrada por cobro de prestamo del cliente {self.loan.customer.name} por un monto de {self.amount} id de prestamo {self.loan.id}')
         else:
-            WalletMovement.objects.create(wallet=destiny_wallet, name = 'pago de cuota', type='loan_out', amount=self.amount, reason=f'Descuento por error {self.loan.customer.name} por un monto de {self.amount*-1} id de prestamo {self.loan.id}')
+            WalletMovement.objects.create(wallet=destiny_wallet, name = 'Corrección de pago', type='loan_out', amount=self.amount, reason=f'Descuento por error {self.loan.customer.name} por un monto de {self.amount*-1} id de prestamo {self.loan.id}')
         # Check if loan is finished
         loan_total = self.loan.interest_amount + self.loan.amount
         loan_paid = self.loan.interest_amount_paid + self.loan.principal_amount_paid

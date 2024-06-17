@@ -15,6 +15,7 @@ WALLET_MOVEMENT_TYPE_CHOICES = (
     ("loan_out", "Salida por prestamo"),
     ("loan_in", "Entrada por prestamo"),
     ("admin_charge", "Recarga de administracion"),
+    ("new_loan", "Nuevo prestamo"),
 )
 
 CUSTOMER_TYPE_CHOICES = (
