@@ -38,12 +38,16 @@ class FullLoanSerializer(serializers.ModelSerializer):
     has_markdown = serializers.SerializerMethodField(read_only=True)
     payments = serializers.SerializerMethodField(read_only=True)
     arrears = serializers.SerializerMethodField(read_only=True)
+    end_date = serializers.SerializerMethodField(read_only=True)
 
 
     class Meta:
         model = Loan
         fields = '__all__'
         read_only_fields = ('created_at', 'updated_at')
+
+    def get_end_date(self, obj):
+        return obj.get_end_date()
 
     def get_arrears(self, obj):
         try:
