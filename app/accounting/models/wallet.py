@@ -39,3 +39,8 @@ class WalletMovement(models.Model):
         self.wallet.save()
         self.current_balance = self.wallet.balance
         super(WalletMovement, self).save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        self.wallet.balance -= self.amount
+        self.wallet.save()
+        super(WalletMovement, self).delete(*args, **kwargs)

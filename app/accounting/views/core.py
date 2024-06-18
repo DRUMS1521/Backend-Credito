@@ -44,6 +44,13 @@ class SpendListCreateAPIView(generics.ListCreateAPIView):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
+class DeleteSpendAPIView(generics.DestroyAPIView):
+    permission_classes = (permissions.IsAdminUser,)
+    queryset = WalletMovement.objects.filter(type='exit')
+
+    def perform_destroy(self, instance):
+        instance.delete()
+
 class DepositListCreateAPIView(generics.ListCreateAPIView):
     serializer_class = DepositSerializer
     permission_classes = (permissions.IsAuthenticated,)
