@@ -1,9 +1,10 @@
 from rest_framework import serializers
-from app.accounting.models import DailyCheckout
+from app.accounting.models import DailyCheckout, PeriodClosures
 from django.utils import timezone
 
 class DailyCheckoutSerializer(serializers.ModelSerializer):
     day = serializers.SerializerMethodField(read_only=True)
+    period = serializers.PrimaryKeyRelatedField(queryset=PeriodClosures.objects.filter(closed=False), required=False)
     class Meta:
         model = DailyCheckout
         fields = '__all__'
