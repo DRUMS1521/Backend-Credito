@@ -17,4 +17,15 @@ class DailyCheckoutSerializer(serializers.ModelSerializer):
         if DailyCheckout.objects.filter(user=attrs['user'], created_at__date=today).exists():
             raise serializers.ValidationError('Ya has hecho un cierre de caja hoy')
         return super().validate(attrs)
+    
+class DailyCheckoutFillerSerializer(serializers.Serializer):
+    initial_balance = serializers.DecimalField(max_digits=10, decimal_places=2)
+    total_income = serializers.DecimalField(max_digits=10, decimal_places=2)
+    total_collected = serializers.DecimalField(max_digits=10, decimal_places=2)
+    total_loans = serializers.DecimalField(max_digits=10, decimal_places=2)
+    total_spend = serializers.DecimalField(max_digits=10, decimal_places=2)
+    final_balance = serializers.DecimalField(max_digits=10, decimal_places=2)
+    loans_in_arrears_amount = serializers.DecimalField(max_digits=10, decimal_places=2)
+    loans_in_arrears = serializers.IntegerField()
+    loans_paid = serializers.IntegerField()
 

@@ -9,6 +9,7 @@ urlpatterns = [
     path('wallet', WalletCheckerAPIView.as_view(), name='deposits'),
     #Daily checkout
     path('daily-checkout', DailyCheckoutListCreateView.as_view(), name='daily-checkout'),
+    path('daily-checkout-filler', DailyCheckoutFillerView.as_view(), name='daily-checkout-filler'),
     #Period closures
     path('period-closures', PeriodClosuresListCreateView.as_view(), name='period-closures'),
     path('period-closures/<int:pk>', PeriodClosuresRetrieveUpdateAPIView.as_view(), name='period-closures'),
