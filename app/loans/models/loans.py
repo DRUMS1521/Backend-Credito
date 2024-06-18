@@ -66,6 +66,9 @@ class Loan(models.Model):
         return end_date
     
     def get_arrears(self):
+        pending_dues = self.dues - self.dues_paid
+        if pending_dues < 1:
+            return 0, 0, 0
         # this function returns the days in arrears, the number of dues in arrears and the amount in arrears
         if self.recurrence == 'daily':
             # Get the simulated date of the last payment according to the dues
@@ -82,7 +85,8 @@ class Loan(models.Model):
                 # divide by 7, we need to remove sunday
                 number_of_sundays = math.floor(days/7)
                 days -= number_of_sundays
-                return days, days, days*self.due_amount
+                dues = days if days > pending_dues else pending_dues
+                return days, dues, dues*self.due_amount
         elif self.recurrence == 'weekly':
             # Get the simulated date of the last payment according to the dues
             if self.dues_paid == 0:
@@ -95,7 +99,8 @@ class Loan(models.Model):
             if days < 7:
                 return 0, 0, 0
             else:
-                return days, math.floor(days/7), math.floor(days/7)*self.due_amount
+                dues = math.floor(days/7) if math.floor(days/7) > pending_dues else pending_dues
+                return days, dues, dues*self.due_amount
         elif self.recurrence == 'biweekly':
             # Get the simulated date of the last payment according to the dues
             if self.dues_paid == 0:
@@ -108,7 +113,8 @@ class Loan(models.Model):
             if days < 14:
                 return 0, 0, 0
             else:
-                return days, math.floor(days/14), math.floor(days/14)*self.due_amount
+                dues = math.floor(days/14) if math.floor(days/14) > pending_dues else pending_dues
+                return days, dues, dues*self.due_amount
         elif self.recurrence == 'monthly':
             # Get the simulated date of the last payment according to the dues
             if self.dues_paid == 0:
@@ -121,7 +127,8 @@ class Loan(models.Model):
             if days < 30:
                 return 0, 0, 0
             else:
-                return days, math.floor(days/30), math.floor(days/30)*self.due_amount
+                dues = math.floor(days/30) if math.floor(days/30) > pending_dues else pending_dues
+                return days, dues, dues*self.due_amount
 
 
 class Payment(models.Model):

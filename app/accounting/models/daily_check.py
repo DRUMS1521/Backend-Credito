@@ -14,7 +14,17 @@ class DailyCheckout(models.Model):
     customers_not_collected = models.IntegerField(null=False, default=0)
     customers_collected = models.IntegerField(null=False, default=0)
     created_at = models.DateTimeField(default=timezone.now)
+    period = models.ForeignKey('accounting.PeriodClosures', on_delete=models.CASCADE, null=False)
 
     class Meta:
         verbose_name_plural = 'DailyCheckouts'
         db_table = 'daily_checkouts'
+
+    def save(self, *args, **kwargs):
+        # set period automatically
+        from app.accounting.models.period_closures import PeriodClosures
+        period = PeriodClosures.objects.filter(closed=False).first()
+        if not period:
+            period = PeriodClosures.objects.create(start_date=timezone.now().date(), end_date=timezone.now().date())
+        self.period = period
+        super(DailyCheckout, self).save(*args, **kwargs)
