@@ -127,4 +127,6 @@ class CustomerLoanSerializer(serializers.Serializer):
             customer.business_document = validated_data['new_customer']['business_document'] if validated_data['new_customer']['business_document'] else customer.business_document
             customer.save()
         loan = Loan.objects.create(customer=customer, **validated_data['loan'])
+        customer.notes = None
+        customer.save()
         return loan
