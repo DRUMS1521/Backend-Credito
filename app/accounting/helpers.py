@@ -11,7 +11,7 @@ def get_data_filler(user, date):
     initial_balance = movements.first().last_balance if movements.exists() else user_wallet.balance
     # Total collected refers to the total amount of money that has left the wallet with type 'loan_in' - 'loan_out'
     total_collected = movements.filter(type__in=['loan_in', 'loan_out']).aggregate(total_collected=Sum('amount'))['total_collected'] or 0
-    total_loans = Loan.objects.filter(collector=user, created_at__date=date).count()
+    total_loans = Loan.objects.filter(collector=user, created_at__date=date).aggregate(total_loans=Sum('amount'))['total_loans'] or 0
     total_spend = movements.filter(type='exit').aggregate(total_spend=Sum('amount'))['total_spend'] or 0
     final_balance = movements.last().current_balance if movements.exists() else user_wallet.balance
     user_loans = Loan.objects.filter(collector=user, is_finished=False)
