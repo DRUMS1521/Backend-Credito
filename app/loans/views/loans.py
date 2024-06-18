@@ -1,10 +1,39 @@
 from app.loans.models import Loan
+from app.accounting.models import WalletMovement, Wallet
 from app.loans.serializers import LoanBasicSerializer, FullLoanSerializer
-from rest_framework.generics import ListAPIView
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.generics import ListAPIView, DestroyAPIView
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from django.utils import timezone
 from django.db.models import Q
 from datetime import timedelta
+
+class LoanDestroyAPIView(DestroyAPIView):
+    queryset = Loan.objects.all()
+    serializer_class = LoanBasicSerializer
+    permission_classes = (IsAdminUser,)
+
+    def perform_destroy(self, instance):
+        # Regenerate wallet movements
+        principal_amount_paid = instance.principal_amount_paid
+        interest_amount_paid = instance.interest_amount_paid
+        total_paid = principal_amount_paid + interest_amount_paid
+        loan_amount = instance.amount
+        user_wallet = Wallet.objects.get(user=instance.collector)
+        WalletMovement.objects.create(
+            wallet=user_wallet,
+            type='positive_delete_loan',
+            amount=loan_amount,
+            name='Cancelación de préstamo',
+            reason=f'Cancelación de préstamo {instance.id}'
+        )
+        WalletMovement.objects.create(
+            wallet=user_wallet,
+            type='negative_delete_loan',
+            amount=total_paid,
+            name='Cancelación de préstamo',
+            reason=f'Cancelación de préstamo {instance.id}'
+        )
+        instance.delete()
 
 class LoanBasicListAPIView(ListAPIView):
     serializer_class = LoanBasicSerializer

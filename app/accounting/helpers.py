@@ -19,7 +19,7 @@ def get_data_filler(user, date):
     loans_in_arrears_amount = 0
     for loan in user_loans:
         days_in_arrears, dues_in_arrears, amount_in_arrears = loan.get_arrears()
-        if days_in_arrears > 0:
+        if days_in_arrears > 15:
             loans_in_arrears += 1
             loans_in_arrears_amount += amount_in_arrears
     # Count distinct Loan on Payment

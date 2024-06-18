@@ -16,6 +16,8 @@ WALLET_MOVEMENT_TYPE_CHOICES = (
     ("loan_in", "Entrada por prestamo"),
     ("admin_charge", "Recarga de administracion"),
     ("new_loan", "Nuevo prestamo"),
+    ("positive_delete_loan", "Eliminacion de prestamo positivo"),
+    ("negative_delete_loan", "Eliminacion de prestamo negativo"),
 )
 
 CUSTOMER_TYPE_CHOICES = (
