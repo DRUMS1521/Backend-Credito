@@ -25,7 +25,7 @@ class DailyCheckoutListCreateView(generics.ListCreateAPIView):
                 queryset = DailyCheckout.objects.all(user=self.request.user)
         # filter by period closure id
         period_closure_id = self.request.query_params.get('period_closure_id', None)
-        if period_closure_id is not None and period_closure_id != '':
+        if period_closure_id is not None and period_closure_id != '' and period_closure_id != 'null' and period_closure_id != 'undefined':
             queryset = queryset.filter(period_closure__id=period_closure_id)
         return queryset
     
