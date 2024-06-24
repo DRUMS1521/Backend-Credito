@@ -14,7 +14,19 @@ class DailyCheckoutListCreateView(generics.ListCreateAPIView):
     pagination_class = None
 
     def get_queryset(self):
-        queryset = DailyCheckout.objects.filter(user=self.request.user)
+        if not self.request.user.is_superuser:
+            queryset = DailyCheckout.objects.filter(user=self.request.user)
+        else:
+            # get the user id from the query params
+            user_id = self.request.query_params.get('user_id', None)
+            if user_id is not None:
+                queryset = DailyCheckout.objects.filter(user__id=user_id)
+            else:
+                queryset = DailyCheckout.objects.all(user=self.request.user)
+        # filter by period closure id
+        period_closure_id = self.request.query_params.get('period_closure_id', None)
+        if period_closure_id is not None and period_closure_id != '':
+            queryset = queryset.filter(period_closure__id=period_closure_id)
         return queryset
     
     def perform_create(self, serializer):
