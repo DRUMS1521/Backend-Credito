@@ -22,7 +22,6 @@ class Customer(models.Model):
     business_photo = models.ForeignKey(UploadedFiles, on_delete=models.CASCADE, null=True, related_name='business_photo')
     business_document = models.ForeignKey(UploadedFiles, on_delete=models.CASCADE, null=True, related_name='business_document')
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='created_by')
-    debt_collector = models.ManyToManyField(User, related_name='debt_collector')
     is_active = models.BooleanField(default=True, null=False)
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)

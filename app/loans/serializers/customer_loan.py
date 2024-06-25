@@ -111,9 +111,6 @@ class CustomerLoanSerializer(serializers.Serializer):
         else:
             customer = validated_data['old_customer']['customer']
             # check debt collector
-            debt_collectors = customer.debt_collector.all()
-            if not validated_data['loan']['collector'] in debt_collectors:
-                customer.debt_collector.add(validated_data['loan']['collector'])
             #update customer
             customer.home_address = validated_data['new_customer']['home_address']
             customer.business_name = validated_data['new_customer']['business_name']

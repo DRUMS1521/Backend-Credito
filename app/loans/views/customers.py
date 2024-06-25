@@ -1,7 +1,7 @@
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.generics import ListAPIView, CreateAPIView, UpdateAPIView, RetrieveAPIView
 from app.loans.serializers import CustomerBasicSerializer, CustomerCustomSerializer, CustomerAddNotesSerializer
-from app.loans.models import Customer
+from app.loans.models import Customer, Loan
 
 class CustomerBasicListAPIView(ListAPIView):
     permission_classes = (IsAuthenticated,)
@@ -24,7 +24,11 @@ class CustomerBasicListAPIView(ListAPIView):
         if document is not None and document != '' and document != 'null':
             queryset = queryset.filter(document_number=document)
         if debt_collector is not None and debt_collector != '' and debt_collector != 'null' and debt_collector != 'all':
-            queryset = queryset.filter(debt_collector__id=debt_collector)
+            loans = Loan.objects.filter(collector__id=debt_collector)
+            customers = [loan.customer for loan in loans]
+            # delete duplicates
+            customers = list(dict.fromkeys(customers))
+            queryset = queryset.filter(id__in=[customer.id for customer in customers])
         return queryset
     
 class AllcustomersFullRetrieveAPIView(RetrieveAPIView):
