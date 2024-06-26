@@ -69,6 +69,7 @@ class Loan(models.Model):
             period = PeriodClosures.get_open_period()
             user_goal = UserGoals.objects.get(user=self.collector, period_closure=period)
             user_goal.borrowed += self.amount
+            user_goal.save()
         super(Loan, self).save(*args, **kwargs)
 
     def get_end_date(self):
