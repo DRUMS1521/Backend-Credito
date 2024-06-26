@@ -82,7 +82,7 @@ class Loan(models.Model):
         elif self.recurrence == 'biweekly':
             end_date = start_date + datetime.timedelta(weeks=(dues-1)*2)
         elif self.recurrence == 'monthly':
-            end_date = start_date + datetime.timedelta(months=(dues-1))
+            end_date = start_date + datetime.timedelta(days=(dues-1)*30)
         return end_date
     
     def get_arrears(self):
