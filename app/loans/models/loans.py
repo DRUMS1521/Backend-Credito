@@ -241,6 +241,9 @@ class Payment(models.Model):
             self.loan.save()
             # Update Goal
             user_goal.loans_finished += 1
+            # Check if is clavo
+            if self.loan.is_clavo:
+                user_goal.clavos_recovered += 1
         user_goal.save()
         
         super(Payment, self).save(*args, **kwargs)
