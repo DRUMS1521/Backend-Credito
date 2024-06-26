@@ -1,5 +1,5 @@
 from app.loans.models import Loan
-from app.accounting.models import WalletMovement, Wallet
+from app.accounting.models import WalletMovement, Wallet, PeriodClosures, UserGoals
 from app.loans.serializers import LoanBasicSerializer, FullLoanSerializer
 from rest_framework.generics import ListAPIView, DestroyAPIView
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
@@ -33,6 +33,12 @@ class LoanDestroyAPIView(DestroyAPIView):
             name='Cancelación de préstamo',
             reason=f'Cancelación de préstamo {instance.id}'
         )
+        # Update user goals
+        current_period = PeriodClosures.get_open_period()
+        user_goal = UserGoals.objects.filter(user=instance.collector, period_closure=current_period).first()
+        user_goal.borrowed -= loan_amount
+        user_goal.collected -= total_paid
+        user_goal.save()
         instance.delete()
 
 class LoanBasicListAPIView(ListAPIView):
