@@ -17,5 +17,5 @@ urlpatterns = [
     path('actual-period-closure', ActualPeriodClosureRetrieveAPIView.as_view(), name='actual-period-closure'),
     path('period-closure-custom', PeriodClosureCustomCreateView.as_view(), name='period-closure-custom'),
     #User goals
-    path('user-goals', UserGoalsRetrieveUpdateAPIView.as_view(), name='user-goals'),
+    path('user-goals/<int:user_id>', UserGoalsRetrieveUpdateAPIView.as_view(), name='user-goals'),
 ]
