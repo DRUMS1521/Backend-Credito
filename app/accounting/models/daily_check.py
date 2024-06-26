@@ -23,8 +23,6 @@ class DailyCheckout(models.Model):
     def save(self, *args, **kwargs):
         # set period automatically
         from app.accounting.models.period_closures import PeriodClosures
-        period = PeriodClosures.objects.filter(closed=False).first()
-        if not period:
-            period = PeriodClosures.objects.create(start_date=timezone.now().date(), end_date=timezone.now().date())
+        period = PeriodClosures.get_open_period()
         self.period = period
         super(DailyCheckout, self).save(*args, **kwargs)

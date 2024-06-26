@@ -1,3 +1,3 @@
 from .core import SpendSerializer, DepositSerializer, WalletSerializer, WalletMovementSerializer
 from .daily_check import DailyCheckoutSerializer, DailyCheckoutFillerSerializer
-from .period_closures import PeriodClosuresSerializer, NewPeriodClosureSerializer
+from .period_closures import PeriodClosuresSerializer, NewPeriodClosureSerializer, UserGoalsSerializer

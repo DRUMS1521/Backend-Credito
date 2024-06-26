@@ -3,6 +3,7 @@ from app.core.constants import *
 from app.core.models import UploadedFiles
 from app.authentication.models import User
 from rest_framework import serializers
+from app.accounting.models import PeriodClosures, UserGoals
 
 class CustomerLoanSerializer(serializers.Serializer):
     customer_type = serializers.ChoiceField(choices=CUSTOMER_TYPE_CHOICES, required=True)
@@ -126,4 +127,10 @@ class CustomerLoanSerializer(serializers.Serializer):
         loan = Loan.objects.create(customer=customer, **validated_data['loan'])
         customer.notes = None
         customer.save()
+        if customer_type == 'new':
+            #Update goals
+            period = PeriodClosures.get_open_period()
+            user_goal = UserGoals.objects.filter(user=validated_data['new_customer']['created_by'], period_closure=period).first()
+            user_goal.new_customers += 1
+            user_goal.save()
         return loan

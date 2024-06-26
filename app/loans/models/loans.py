@@ -4,7 +4,7 @@ from app.authentication.models import User
 from app.core.models import UploadedFiles
 from app.loans.models.customers import Customer
 from app.core.constants import LOAN_RECURRENCE_CHOICES
-from app.accounting.models import Wallet, WalletMovement
+from app.accounting.models import Wallet, WalletMovement, PeriodClosures, UserGoals
 from django.utils import timezone
 import datetime
 import math
@@ -15,6 +15,20 @@ import uuid
 def get_current_date():
     return timezone.now().date()
 
+def update_clavo_status(loan, days):
+    if days > 60:
+        loan.is_clavo = True
+        loan.save()
+    else:
+        if loan.is_clavo:
+            loan.is_clavo = False
+            loan.save()
+            # Update Goals
+            period = PeriodClosures.get_open_period()
+            user_goal = UserGoals.objects.get(user=loan.collector, period_closure=period)
+            user_goal.clavos_recovered += 1
+            user_goal.save()
+    return loan
 
 class Loan(models.Model):
     id = models.AutoField(primary_key=True)
@@ -27,6 +41,7 @@ class Loan(models.Model):
     dues = models.IntegerField(null=True)
     due_amount = models.DecimalField(null=True, decimal_places=2, max_digits=10)
     start_date = models.DateField(null=False, default=get_current_date)
+    is_clavo = models.BooleanField(null=False, default=False)
     #Balance
     interest_amount_paid = models.DecimalField(null=False, default=0, decimal_places=2, max_digits=10)
     principal_amount_paid = models.DecimalField(null=False, default=0, decimal_places=2, max_digits=10)
@@ -50,6 +65,10 @@ class Loan(models.Model):
         if self.id == None:
             destiny_wallet = Wallet.objects.get(user=self.collector)
             WalletMovement.objects.create(wallet=destiny_wallet, name = 'Nuevo prestamo', type='new_loan', amount=self.amount, reason=f'Salida por prestamo del cliente {self.customer.name} por un monto de {self.amount}')
+            # Update Goals
+            period = PeriodClosures.get_open_period()
+            user_goal = UserGoals.objects.get(user=self.collector, period_closure=period)
+            user_goal.borrowed += self.amount
         super(Loan, self).save(*args, **kwargs)
 
     def get_end_date(self):
@@ -85,6 +104,7 @@ class Loan(models.Model):
                 # divide by 7, we need to remove sunday
                 number_of_sundays = math.floor(days/7)
                 days -= number_of_sundays
+                update_clavo_status(self, days)
                 dues = days if days <= pending_dues else pending_dues
                 return days, dues, dues*self.due_amount
         elif self.recurrence == 'weekly':
@@ -95,6 +115,7 @@ class Loan(models.Model):
                 last_payment = self.start_date + datetime.timedelta(weeks=(self.dues_paid-1))
             # Get the difference between the last payment and today
             days = (timezone.now().date() - last_payment).days
+            update_clavo_status(self, days)
             # check if is lower than 7
             if days < 7:
                 return 0, 0, 0
@@ -109,6 +130,7 @@ class Loan(models.Model):
                 last_payment = self.start_date + datetime.timedelta(weeks=(self.dues_paid-1)*2)
             # Get the difference between the last payment and today
             days = (timezone.now().date() - last_payment).days
+            update_clavo_status(self, days)
             # check if is lower than 14
             if days < 14:
                 return 0, 0, 0
@@ -123,12 +145,15 @@ class Loan(models.Model):
                 last_payment = self.start_date + datetime.timedelta(months=(self.dues_paid-1))
             # Get the difference between the last payment and today
             days = (timezone.now().date() - last_payment).days
+            update_clavo_status(self, days)
             # check if is lower than 30
             if days < 30:
                 return 0, 0, 0
             else:
                 dues = math.floor(days/30) if math.floor(days/30) <= pending_dues else pending_dues
                 return days, dues, dues*self.due_amount
+        else:
+            return 0, 0, 0
 
 
 class Payment(models.Model):
@@ -145,6 +170,8 @@ class Payment(models.Model):
     
     def save(self, *args, **kwargs):
         #Check if amount goes to interest or principal, and update loan balance. First customers have to pay interest, then principal
+        period = PeriodClosures.get_open_period()
+        user_goal = UserGoals.objects.get(user=self.loan.collector, period_closure=period)
         if self.amount > 0:
             amount = self.amount
             # first pay interest
@@ -168,6 +195,8 @@ class Payment(models.Model):
                 else:
                     amount = 0
             self.loan.save()
+            # Update Goals
+            user_goal.collected += self.amount
 
         else:
             # If amount is negative, is a discount
@@ -191,6 +220,8 @@ class Payment(models.Model):
                 else:
                     amount = 0
             self.loan.save()
+            # Update Goals
+            user_goal.collected += self.amount
         # Updatedues paid
         total_paid = self.loan.interest_amount_paid + self.loan.principal_amount_paid
         self.loan.dues_paid = int(total_paid / self.loan.due_amount)
@@ -208,6 +239,10 @@ class Payment(models.Model):
             self.loan.is_finished = True
             self.loan.finished_at = timezone.now()
             self.loan.save()
+            # Update Goal
+            user_goal.loans_finished += 1
+        user_goal.save()
+        
         super(Payment, self).save(*args, **kwargs)
 
 class LoanMarkdowns(models.Model):

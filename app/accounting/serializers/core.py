@@ -25,7 +25,7 @@ class WalletSerializer(serializers.ModelSerializer):
         serializer = WalletMovementSerializer(movements, many=True)
         return serializer.data
     def get_wallet_movements(self, obj):
-        movements = WalletMovement.objects.filter(wallet=obj)
+        movements = WalletMovement.objects.filter(wallet=obj).order_by('-created_at')[:30]
         serializer = WalletMovementSerializer(movements, many=True)
         return serializer.data
 

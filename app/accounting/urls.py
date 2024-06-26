@@ -16,4 +16,6 @@ urlpatterns = [
     path('period-closures/<int:pk>', PeriodClosuresRetrieveUpdateAPIView.as_view(), name='period-closures'),
     path('actual-period-closure', ActualPeriodClosureRetrieveAPIView.as_view(), name='actual-period-closure'),
     path('period-closure-custom', PeriodClosureCustomCreateView.as_view(), name='period-closure-custom'),
+    #User goals
+    path('user-goals', UserGoalsRetrieveUpdateAPIView.as_view(), name='user-goals'),
 ]

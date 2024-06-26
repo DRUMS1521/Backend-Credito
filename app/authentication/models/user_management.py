@@ -1,6 +1,6 @@
 from django.contrib.auth.models import (
     AbstractBaseUser, BaseUserManager, PermissionsMixin)
-from app.accounting.models import Wallet
+from app.accounting.models import Wallet, PeriodClosures, UserGoals
 
 
 class UserManager(BaseUserManager):
@@ -14,6 +14,12 @@ class UserManager(BaseUserManager):
         #Create wallet
         wallet = Wallet(user=user)
         wallet.save()
+        #Create user goals
+        period = PeriodClosures.get_open_period()
+        if not period:
+            pass
+        else:
+            UserGoals.objects.create(user=user, period_closure=period)
         return user
 
     def create_superuser(self, email, password=None):

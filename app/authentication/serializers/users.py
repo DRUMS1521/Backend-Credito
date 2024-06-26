@@ -1,7 +1,7 @@
 from app.authentication.models import User
 from rest_framework import serializers
-from app.accounting.models import Wallet
-from app.accounting.serializers import WalletSerializer
+from app.accounting.models import Wallet, UserGoals, PeriodClosures
+from app.accounting.serializers import WalletSerializer, UserGoalsSerializer
 
 class ListAdminUsersSerializer(serializers.ModelSerializer):
     class Meta:
@@ -10,10 +10,20 @@ class ListAdminUsersSerializer(serializers.ModelSerializer):
 
 class UsersSerializer(serializers.ModelSerializer):
     wallet_info = serializers.SerializerMethodField(read_only=True)
+    goals = serializers.SerializerMethodField(read_only=True)
     class Meta:
         model = User
-        fields = ['id', 'first_name', 'last_name', 'email', 'phone_number', 'address', 'is_active', 'is_superuser', 'password', 'wallet_info']  # Include 'password'
+        fields = ['id', 'first_name', 'last_name', 'email', 'phone_number', 'address', 'is_active', 'is_superuser', 'password', 'wallet_info', 'goals']  # Include 'password'
         extra_kwargs = {'password': {'write_only': True, 'required': False, 'allow_blank': True, 'allow_null': True}}
+
+    def get_goals(self, obj):
+        period = PeriodClosures.get_open_period()
+        goals = UserGoals.objects.filter(user=obj, period_closure=period)
+        if goals.exists():
+            serializer = UserGoalsSerializer(goals.first())
+            return serializer.data
+        else:
+            return None
     
     def get_wallet_info(self, obj):
         wallet = Wallet.objects.filter(user=obj)

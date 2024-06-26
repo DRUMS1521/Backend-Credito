@@ -4,7 +4,7 @@ from django.utils import timezone
 
 class DailyCheckoutSerializer(serializers.ModelSerializer):
     day = serializers.SerializerMethodField(read_only=True)
-    period = serializers.PrimaryKeyRelatedField(queryset=PeriodClosures.objects.filter(closed=False), required=False)
+    period = serializers.PrimaryKeyRelatedField(queryset=PeriodClosures.objects.all(), required=False)
     class Meta:
         model = DailyCheckout
         fields = '__all__'
@@ -13,6 +13,9 @@ class DailyCheckoutSerializer(serializers.ModelSerializer):
     def get_day(self, obj):
         return obj.created_at.date()
     def validate(self, attrs):
+        #Get the current period
+        period = PeriodClosures.get_open_period()
+        attrs['period'] = period
         # Validate that the user has not already created a daily checkout today
         today = timezone.now().date()
         if DailyCheckout.objects.filter(user=attrs['user'], created_at__date=today).exists():

@@ -1,4 +1,5 @@
-from app.accounting.models import PeriodClosures
+from app.accounting.models import PeriodClosures, UserGoals
+from app.authentication.models import User
 from rest_framework import serializers
 from django.utils import timezone
 
@@ -29,4 +30,9 @@ class NewPeriodClosureSerializer(serializers.ModelSerializer):
         end_date = validated_data['end_date']
         new_period = PeriodClosures.objects.create(start_date=start_date, end_date=end_date)
         return new_period
-
+    
+class UserGoalsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserGoals
+        fields = '__all__'
+        read_only_fields = ('id', 'user', 'period_closure', 'borrowed', 'collected', 'loans_finished', 'new_customers', 'clavos_recovered')
