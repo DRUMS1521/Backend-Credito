@@ -25,15 +25,22 @@ class PeriodClosures(models.Model):
         return period
     
     def save(self, *args, **kwargs):
-        if not self.id:
-            from app.authentication.models import User
-            #Close all previous periods
-            PeriodClosures.objects.filter(closed=False).update(closed=True)
-            #Create Goals for all users
+        # Crear un flag para saber si el objeto es nuevo
+        is_new = not self.id
+
+        # Primero guardamos el objeto para asegurar que tenga un ID
+        super(PeriodClosures, self).save(*args, **kwargs)
+
+        if is_new:
+            from app.authentication.models import User  # Idealmente mover esta importación al inicio del archivo
+
+            # Cerrar todos los períodos anteriores
+            PeriodClosures.objects.filter(closed=False).exclude(id=self.id).update(closed=True)
+
+            # Crear objetivos para todos los usuarios
             users = User.objects.all()
             for user in users:
                 UserGoals.objects.create(user=user, period_closure=self)
-        super(PeriodClosures, self).save(*args, **kwargs)
     
 class UserGoals(models.Model):
     id = models.AutoField(primary_key=True)
