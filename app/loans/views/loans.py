@@ -1,7 +1,7 @@
 from app.loans.models import Loan
 from app.accounting.models import WalletMovement, Wallet, PeriodClosures, UserGoals
 from app.loans.serializers import LoanBasicSerializer, FullLoanSerializer
-from rest_framework.generics import ListAPIView, DestroyAPIView
+from rest_framework.generics import ListAPIView, DestroyAPIView, RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from django.utils import timezone
 from django.db.models import Q
@@ -90,4 +90,9 @@ class LoanFullListAPIView(ListAPIView):
         if customer_name is not None and customer_name != '':
             combined_cases &= Q(customer__name__icontains=customer_name)
         return Loan.objects.filter(combined_cases, collector__id=user_id).order_by('ordering', '-id')
+    
+class LoanRetrieveAPIView(RetrieveAPIView):
+    queryset = Loan.objects.all()
+    serializer_class = FullLoanSerializer
+    lookup_field = 'code'
 
