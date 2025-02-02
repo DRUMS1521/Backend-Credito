@@ -193,9 +193,9 @@ class Payment(models.Model):
             self.loan.save()
             # Update Goals
             user_goal.collected += self.amount
-            # if not has other payments today, update goal for different loans collected
+            # if loan not has other payments today, update goal for different loans collected
             today = timezone.now().date()
-            if not Payment.objects.filter(loan__collector=self.loan.collector, created_at__date=today).exclude(id=self.id).exists():
+            if not Payment.objects.filter(loan=self.loan, created_at__date=today).exclude(id=self.id).exists():
                 user_goal.different_loans_collected += 1
 
 
