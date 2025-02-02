@@ -48,6 +48,8 @@ class UserGoals(models.Model):
     period_closure = models.ForeignKey(PeriodClosures, on_delete=models.CASCADE)
     borrowed_goal = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     borrowed = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    different_loans_collected_goal = models.IntegerField(default=0)
+    different_loans_collected = models.IntegerField(default=0)
     collected_goal = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     collected = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     loans_finished_goal = models.IntegerField(default=0)

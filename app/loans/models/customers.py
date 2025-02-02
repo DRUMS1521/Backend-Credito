@@ -30,3 +30,6 @@ class Customer(models.Model):
         verbose_name_plural = 'Customers'
         db_table = 'customers'
 
+    def get_customer_available_credit(self):
+        return 0
+
