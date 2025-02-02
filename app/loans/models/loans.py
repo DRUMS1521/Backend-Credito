@@ -100,56 +100,69 @@ def get_arrears(self):
     pending_dues = self.dues - self.dues_paid
     if pending_dues < 1:
         return 0, 0, 0
-    
+    # this function returns the days in arrears, the number of dues in arrears and the amount in arrears
     if self.recurrence == 'daily':
-        last_payment = self.start_date if self.dues_paid == 0 else self.start_date + datetime.timedelta(days=(self.dues_paid - 1))
-        today = timezone.now().date()
-        days = get_business_days(last_payment, today) - 1  # No contar el día del último pago
-        
+        # Get the simulated date of the last payment according to the dues
+        if self.dues_paid == 0:
+            last_payment = self.start_date
+        else:
+            last_payment = self.start_date + datetime.timedelta(days=(self.dues_paid-1))
+        # Get the difference between the last payment and today
+        days = get_business_days(timezone.now().date(), last_payment)
+        # check if is lower than 1
         if days < 1:
             return 0, 0, 0
-        
-        update_clavo_status(self, days)
-        dues = min(days, pending_dues)
-        return days, dues, dues * self.due_amount
-    
+        else:
+            update_clavo_status(self, days)
+            dues = days if days <= pending_dues else pending_dues
+            return days, dues, dues*self.due_amount
     elif self.recurrence == 'weekly':
-        last_payment = self.start_date if self.dues_paid == 0 else self.start_date + datetime.timedelta(weeks=(self.dues_paid - 1))
-        today = timezone.now().date()
-        days = get_business_days(last_payment, today) - 1
-        
+        # Get the simulated date of the last payment according to the dues
+        if self.dues_paid == 0:
+            last_payment = self.start_date
+        else:
+            last_payment = self.start_date + datetime.timedelta(weeks=(self.dues_paid-1))
+        # Get the difference between the last payment and today
+        days = (timezone.now().date() - last_payment).days
         update_clavo_status(self, days)
+        # check if is lower than 7
         if days < 7:
             return 0, 0, 0
         else:
-            dues = min(math.floor(days / 7), pending_dues)
-            return days, dues, dues * self.due_amount
-    
+            dues = math.floor(days/7) if math.floor(days/7) <= pending_dues else pending_dues
+            return days, dues, dues*self.due_amount
     elif self.recurrence == 'biweekly':
-        last_payment = self.start_date if self.dues_paid == 0 else self.start_date + datetime.timedelta(weeks=(self.dues_paid - 1) * 2)
-        today = timezone.now().date()
-        days = get_business_days(last_payment, today) - 1
-        
+        # Get the simulated date of the last payment according to the dues
+        if self.dues_paid == 0:
+            last_payment = self.start_date
+        else:
+            last_payment = self.start_date + datetime.timedelta(weeks=(self.dues_paid-1)*2)
+        # Get the difference between the last payment and today
+        days = (timezone.now().date() - last_payment).days
         update_clavo_status(self, days)
+        # check if is lower than 14
         if days < 14:
             return 0, 0, 0
         else:
-            dues = min(math.floor(days / 14), pending_dues)
-            return days, dues, dues * self.due_amount
-    
+            dues = math.floor(days/14) if math.floor(days/14) <= pending_dues else pending_dues
+            return days, dues, dues*self.due_amount
     elif self.recurrence == 'monthly':
-        last_payment = self.start_date if self.dues_paid == 0 else self.start_date + datetime.timedelta(days=(self.dues_paid - 1) * 30)
-        today = timezone.now().date()
-        days = get_business_days(last_payment, today) - 1
-        
+        # Get the simulated date of the last payment according to the dues
+        if self.dues_paid == 0:
+            last_payment = self.start_date
+        else:
+            last_payment = self.start_date + datetime.timedelta(months=(self.dues_paid-1))
+        # Get the difference between the last payment and today
+        days = (timezone.now().date() - last_payment).days
         update_clavo_status(self, days)
+        # check if is lower than 30
         if days < 30:
             return 0, 0, 0
         else:
-            dues = min(math.floor(days / 30), pending_dues)
-            return days, dues, dues * self.due_amount
-    
-    return 0, 0, 0
+            dues = math.floor(days/30) if math.floor(days/30) <= pending_dues else pending_dues
+            return days, dues, dues*self.due_amount
+    else:
+        return 0, 0, 0
 
 
 class Payment(models.Model):
