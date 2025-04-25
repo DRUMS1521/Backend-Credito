@@ -10,6 +10,8 @@ import datetime
 import math
 #uuid
 import uuid
+from dateutil.relativedelta import relativedelta
+
 
 
 def get_current_date():
@@ -151,7 +153,7 @@ class Loan(models.Model):
             if self.dues_paid == 0:
                 last_payment = self.start_date
             else:
-                last_payment = self.start_date + datetime.timedelta(months=(self.dues_paid-1))
+                last_payment = self.start_date + relativedelta(months=(self.dues_paid - 1))
             # Get the difference between the last payment and today
             days = (timezone.now().date() - last_payment).days
             update_clavo_status(self, days)
